@@ -85,7 +85,7 @@ include("SetUp/CookiesSET.php");
 						<div class="header-ctn">
 							<!-- My account -->
 							<div>
-								<a href="#">
+								<a href="account.php">
 									<i class="fa fa-user-o"></i>
 									<span>My Account</span>
 								</a>
@@ -559,7 +559,7 @@ include("SetUp/CookiesSET.php");
 						<div class="footer">
 							<h3 class="footer-title">Service</h3>
 							<ul class="footer-links">
-								<li><a href="#">My Account</a></li>
+								<li><a href="account.php">My Account</a></li>
 								<li><a href="#">View Cart</a></li>
 								<li><a href="img/troll.jpg">Help</a></li>
 							</ul>

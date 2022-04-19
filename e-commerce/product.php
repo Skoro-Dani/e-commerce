@@ -85,7 +85,7 @@ include("SetUp/CookiesSET.php");
 						<div class="header-ctn">
 							<!-- My account -->
 							<div>
-								<a href="#">
+								<a href="account.php">
 									<i class="fa fa-user-o"></i>
 									<span>My Account</span>
 								</a>
@@ -287,52 +287,34 @@ include("SetUp/CookiesSET.php");
 								} else {
 									echo "<h4 class='product-price'>$prezzo €</h4>";
 								}
-								if ($row->QuantitaDisp > 0) echo '<span class="product-available">In Stock</span>';
-								else echo '<span class="product-available">Out of Stock</span>';
-								echo '</div>';
-								echo "<p>$row->DescShort</p>";
-								echo '<div class="add-to-cart"><div class="qty-label">	Qty<div class="input-number">';
-								echo "<Select name='quantita'>";
-								$i = 0;
-								while ($i < $row->QuantitaDisp && $i < 20)
-									echo "<option>$i</option>";
-								echo "</Select>";
-								echo '</div></div><button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>';
+
+								if ($row->QuantitaDisp > 0) {
+									echo '<span class="product-available">In Stock</span>';
+									echo '</div>';
+									echo "<p>$row->DescShort</p>";
+									echo '<div class="add-to-cart"><div class="qty-label">Qty<div class="input-number">';
+									echo '<select class="input-select">';
+									$i = 0;
+									while ($i < $row->QuantitaDisp && $i < 20) {
+										echo "<option>$i</option>";
+										$i++;
+									}
+									echo "</Select>";
+									echo '</div></div><button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button></div>';
+								} else {
+									echo '<span class="product-available">Out of Stock</span>';
+									echo '</div>';
+								}
+								echo '<ul class="product-links">';
+								echo '<li>Category:</li>';
+								$categorie = $row->Categorie;
+								$arr = explode(",", $categorie);
+								for ($i = 0; $i < count($arr); $i++)
+									echo "<li><a href='store.php?categorie=$arr[$i]'>$arr[$i]</a></li>";
+								echo '</ul>';
 							}
 						}
 						?>
-
-
-						<!--<div class="add-to-cart">
-							<div class="qty-label">
-								Qty
-								<div class="input-number">
-									<input type="number">
-									<span class="qty-up">+</span>
-									<span class="qty-down">-</span>
-								</div>
-							</div>
-							<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>-->
-						</div>
-
-						<ul class="product-btns">
-							<li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>
-							<li><a href="#"><i class="fa fa-exchange"></i> add to compare</a></li>
-						</ul>
-
-						<ul class="product-links">
-							<li>Category:</li>
-							<li><a href="#">Headphones</a></li>
-							<li><a href="#">Accessories</a></li>
-						</ul>
-
-						<ul class="product-links">
-							<li>Share:</li>
-							<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-							<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-							<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-							<li><a href="#"><i class="fa fa-envelope"></i></a></li>
-						</ul>
 
 					</div>
 				</div>
@@ -345,7 +327,7 @@ include("SetUp/CookiesSET.php");
 						<ul class="tab-nav">
 							<li class="active"><a data-toggle="tab" href="#tab1">Description</a></li>
 							<li><a data-toggle="tab" href="#tab2">Details</a></li>
-							<li><a data-toggle="tab" href="#tab3">Reviews (3)</a></li>
+							<li><a data-toggle="tab" href="#tab3">Reviews</a></li>
 						</ul>
 						<!-- /product tab nav -->
 
@@ -355,7 +337,17 @@ include("SetUp/CookiesSET.php");
 							<div id="tab1" class="tab-pane fade in active">
 								<div class="row">
 									<div class="col-md-12">
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+										<?php
+										$sql = $conn->prepare("SELECT * FROM articoli WHERE ID = ?");
+										$sql->bind_param('i', $_GET["ID"]);
+										$sql->execute();
+										$result = $sql->get_result();
+										if ($result !== false && $result->num_rows > 0) {
+											if ($row = $result->fetch_object()) {
+												echo "<p>$row->DescShort</p>";
+											}
+										}
+										?>
 									</div>
 								</div>
 							</div>
@@ -365,7 +357,17 @@ include("SetUp/CookiesSET.php");
 							<div id="tab2" class="tab-pane fade in">
 								<div class="row">
 									<div class="col-md-12">
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+										<?php
+										$sql = $conn->prepare("SELECT * FROM articoli WHERE ID = ?");
+										$sql->bind_param('i', $_GET["ID"]);
+										$sql->execute();
+										$result = $sql->get_result();
+										if ($result !== false && $result->num_rows > 0) {
+											if ($row = $result->fetch_object()) {
+												echo "<p>$row->DescLong</p>";
+											}
+										}
+										?>
 									</div>
 								</div>
 							</div>
@@ -377,363 +379,240 @@ include("SetUp/CookiesSET.php");
 									<!-- Rating -->
 									<div class="col-md-3">
 										<div id="rating">
-											<div class="rating-avg">
-												<span>4.5</span>
-												<div class="rating-stars">
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star-o"></i>
-												</div>
-											</div>
-											<ul class="rating">
-												<li>
-													<div class="rating-stars">
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-													</div>
-													<div class="rating-progress">
-														<div style="width: 80%;"></div>
-													</div>
-													<span class="sum">3</span>
-												</li>
-												<li>
-													<div class="rating-stars">
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star-o"></i>
-													</div>
-													<div class="rating-progress">
-														<div style="width: 60%;"></div>
-													</div>
-													<span class="sum">2</span>
-												</li>
-												<li>
-													<div class="rating-stars">
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star-o"></i>
-														<i class="fa fa-star-o"></i>
-													</div>
-													<div class="rating-progress">
-														<div></div>
-													</div>
-													<span class="sum">0</span>
-												</li>
-												<li>
-													<div class="rating-stars">
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star-o"></i>
-														<i class="fa fa-star-o"></i>
-														<i class="fa fa-star-o"></i>
-													</div>
-													<div class="rating-progress">
-														<div></div>
-													</div>
-													<span class="sum">0</span>
-												</li>
-												<li>
-													<div class="rating-stars">
-														<i class="fa fa-star"></i>
-														<i class="fa fa-star-o"></i>
-														<i class="fa fa-star-o"></i>
-														<i class="fa fa-star-o"></i>
-														<i class="fa fa-star-o"></i>
-													</div>
-													<div class="rating-progress">
-														<div></div>
-													</div>
-													<span class="sum">0</span>
-												</li>
-											</ul>
+											<?php
+											$sql = $conn->prepare("SELECT * FROM articoli join commento on articoli.ID=commento.IdArticolo join utente on commento.IdUtente = utente.ID WHERE articoli.ID = ?");
+											$sql->bind_param('i', $_GET["ID"]);
+											$sql->execute();
+											$result = $sql->get_result();
+											$AVGstelle = 0;
+											$stelle[1] = 0;
+											$stelle[2] = 0;
+											$stelle[3] = 0;
+											$stelle[4] = 0;
+											$stelle[5] = 0;
+											$maxStelle = 0;
+											if ($result !== false && $result->num_rows > 0) {
+												for ($j = 0; $j < $result->num_rows; $j++) {
+													if ($row = $result->fetch_object()) {
+														$AVGstelle += $row->stelleCommento;
+														switch ($row->stelleCommento) {
+															case 1:
+																$stelle[1]++;
+																break;
+															case 2:
+																$stelle[2]++;
+																break;
+															case 3:
+																$stelle[3]++;
+																break;
+															case 4:
+																$stelle[4]++;
+																break;
+															case 5:
+																$stelle[5]++;
+																break;
+																echo $row->stelleCommento;
+														}
+														$maxStelle++;
+													}
+												}
+												$AVGstelle = $AVGstelle / $maxStelle;
+											}
+											echo '<div class="rating-avg">';
+											echo "<span>$AVGstelle</span>";
+											echo '<div class="rating-stars">';
+											for ($i = 0; $i < 5; $i++) {
+												if ($i < $AVGstelle) echo '<i class="fa fa-star"></i>';
+												else echo '<i class="fa fa-star-o"></i>';
+											}
+											echo '</div>';
+											echo '</div>';
+
+											echo '<ul class="rating">';
+											for ($j = 5; $j > 0; $j--) {
+												if ($stelle[$j] > 0) $progress = ($stelle[$j] / $maxStelle) * 100;
+												else $progress = 0;
+												echo '<li>';
+												echo '<div class="rating-stars">';
+												for ($i = 0; $i < 5; $i++) {
+													if ($i < $j) echo '<i class="fa fa-star"></i>';
+													else echo '<i class="fa fa-star-o"></i>';
+												}
+												echo '</div>';
+												echo '<div class="rating-progress">';
+
+												echo "<div style='width: $progress%;'></div>";
+												echo '</div>';
+												echo "<span class='sum'>$j</span>";
+												echo '</li>';
+											}
+											echo '</ul>';
+											?>
 										</div>
 									</div>
 									<!-- /Rating -->
-
 									<!-- Reviews -->
 									<div class="col-md-6">
 										<div id="reviews">
 											<ul class="reviews">
-												<li>
-													<div class="review-heading">
-														<h5 class="name">John</h5>
-														<p class="date">27 DEC 2018, 8:0 PM</p>
-														<div class="review-rating">
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star-o empty"></i>
-														</div>
-													</div>
-													<div class="review-body">
-														<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
-													</div>
-												</li>
-												<li>
-													<div class="review-heading">
-														<h5 class="name">John</h5>
-														<p class="date">27 DEC 2018, 8:0 PM</p>
-														<div class="review-rating">
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star-o empty"></i>
-														</div>
-													</div>
-													<div class="review-body">
-														<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
-													</div>
-												</li>
-												<li>
-													<div class="review-heading">
-														<h5 class="name">John</h5>
-														<p class="date">27 DEC 2018, 8:0 PM</p>
-														<div class="review-rating">
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star"></i>
-															<i class="fa fa-star-o empty"></i>
-														</div>
-													</div>
-													<div class="review-body">
-														<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
-													</div>
-												</li>
-											</ul>
-											<ul class="reviews-pagination">
-												<li class="active">1</li>
-												<li><a href="#">2</a></li>
-												<li><a href="#">3</a></li>
-												<li><a href="#">4</a></li>
-												<li><a href="#"><i class="fa fa-angle-right"></i></a></li>
+												<?php
+												$sql = $conn->prepare("SELECT * FROM articoli join commento on articoli.ID=commento.IdArticolo join utente on commento.IdUtente = utente.ID WHERE articoli.ID = ?");
+												$sql->bind_param('i', $_GET["ID"]);
+												$sql->execute();
+												$result = $sql->get_result();
+												if ($result !== false && $result->num_rows > 0) {
+													for ($j = 0; $j < $result->num_rows; $j++) {
+														if ($row = $result->fetch_object()) {
+															echo '<li>';
+															echo '<div class="review-heading">';
+															echo "<h5 class='name'>$row->username";
+															if ($row->AcquistoVerificato == 1) echo "<img src='img/verificato.png'>";
+															echo '</h5>';
+															echo '<div class="review-rating">';
+
+															for ($i = 0; $i < 5; $i++) {
+																if ($i < $row->stelleCommento) echo '<i class="fa fa-star"></i>';
+																else echo '<i class="fa fa-star-o"></i>';
+															}
+															echo '</div>';
+															echo '</div>';
+															echo '<div class="review-body">';
+															echo "<p>$row->testo</p>";
+															echo '</div>';
+															echo '</li>';
+														}
+													}
+												}
+												?>
 											</ul>
 										</div>
 									</div>
 									<!-- /Reviews -->
-
 									<!-- Review Form -->
 									<div class="col-md-3">
 										<div id="review-form">
-											<form class="review-form">
-												<input class="input" type="text" placeholder="Your Name">
-												<input class="input" type="email" placeholder="Your Email">
-												<textarea class="input" placeholder="Your Review"></textarea>
-												<div class="input-rating">
-													<span>Your Rating: </span>
-													<div class="stars">
-														<input id="star5" name="rating" value="5" type="radio"><label for="star5"></label>
-														<input id="star4" name="rating" value="4" type="radio"><label for="star4"></label>
-														<input id="star3" name="rating" value="3" type="radio"><label for="star3"></label>
-														<input id="star2" name="rating" value="2" type="radio"><label for="star2"></label>
-														<input id="star1" name="rating" value="1" type="radio"><label for="star1"></label>
-													</div>
+											<?php
+											if (!isset($_SESSION["IDutente"])) echo '<form class="review-form" action="AggiungiRecensione.php" method="POST">';
+											else echo '<form class="review-form" action="Login.php">';
+											?>
+											<textarea class="input" placeholder="Your Review" name="testo"></textarea>
+											<div class="input-rating">
+												<span>Your Rating: </span>
+												<div class="stars">
+													<input id="star5" name="rating" value="5" type="radio"><label for="star5"></label>
+													<input id="star4" name="rating" value="4" type="radio"><label for="star4"></label>
+													<input id="star3" name="rating" value="3" type="radio"><label for="star3"></label>
+													<input id="star2" name="rating" value="2" type="radio"><label for="star2"></label>
+													<input id="star1" name="rating" value="1" type="radio"><label for="star1"></label>
 												</div>
-												<button class="primary-btn">Submit</button>
+											</div>
+											<button class="primary-btn" type="submit">Submit</button>
 											</form>
 										</div>
 									</div>
 									<!-- /Review Form -->
 								</div>
+								<!-- /tab3  -->
 							</div>
-							<!-- /tab3  -->
+							<!-- /product tab content  -->
 						</div>
-						<!-- /product tab content  -->
 					</div>
+					<!-- /product tab -->
 				</div>
-				<!-- /product tab -->
+				<!-- /row -->
 			</div>
-			<!-- /row -->
+			<!-- /container -->
 		</div>
-		<!-- /container -->
-	</div>
-	<!-- /SECTION -->
+		<!-- /SECTION -->
 
-	<!-- Section -->
-	<div class="section">
-		<!-- container -->
-		<div class="container">
-			<!-- row -->
-			<div class="row">
+		<!-- Section -->
+		<div class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<div class="products-tabs">
 
-				<div class="col-md-12">
-					<div class="section-title text-center">
-						<h3 class="title">Related Products</h3>
-					</div>
-				</div>
+						<div class="col-md-12">
+							<div class="section-title text-center">
+								<h3 class="title">Related Products</h3>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<div class="products-slick" data-nav="#slick-nav-1">
+								<?php
+								$sql = $conn->prepare("SELECT * FROM articoli WHERE ID = ?");
+								$sql->bind_param('i', $_GET["ID"]);
+								$sql->execute();
+								$result = $sql->get_result();
+								$categoria = "";
+								if ($result !== false && $result->num_rows > 0) {
+									if ($row = $result->fetch_object()) {
+										$categoria = $row->Categorie;
+									}
+								}
+								$categorie = $row->Categorie;
+								$arr = explode(",", $categorie);
+								for ($i = 0; $i < count($arr); $i++) {
 
-				<!-- product -->
-				<div class="col-md-3 col-xs-6">
-					<div class="product">
-						<div class="product-img">
-							<img src="./img/product01.png" alt="">
-							<div class="product-label">
-								<span class="sale">-30%</span>
-							</div>
-						</div>
-						<div class="product-body">
-							<p class="product-category">Category</p>
-							<h3 class="product-name"><a href="#">product name goes here</a></h3>
-							<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-							<div class="product-rating">
-							</div>
-							<div class="product-btns">
-								<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-								<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-								<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-							</div>
-						</div>
-						<div class="add-to-cart">
-							<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-						</div>
-					</div>
-				</div>
-				<!-- /product -->
+									$sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%','$arr[$i]','%') ");
+									$sql->execute();
+									$result = $sql->get_result();
 
-				<!-- product -->
-				<div class="col-md-3 col-xs-6">
-					<div class="product">
-						<div class="product-img">
-							<img src="./img/product02.png" alt="">
-							<div class="product-label">
-								<span class="new">NEW</span>
-							</div>
-						</div>
-						<div class="product-body">
-							<p class="product-category">Category</p>
-							<h3 class="product-name"><a href="#">product name goes here</a></h3>
-							<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-							<div class="product-rating">
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-							</div>
-							<div class="product-btns">
-								<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-								<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-								<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-							</div>
-						</div>
-						<div class="add-to-cart">
-							<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-						</div>
-					</div>
-				</div>
-				<!-- /product -->
+									if ($result !== false && $result->num_rows > 0) {
+										for ($j = 0; $j < 4; $j++) {
+											if ($row = $result->fetch_object()) {
+												echo '<div class="product">';
+												echo '<div class="product-img">';
+												echo "<img src='./img/$row->source' alt=''>";
+												echo '<div class="product-label"></div>';
+												echo '</div>';
+												echo '<div class="product-body">';
+												echo '<p class="product-category">Category</p>';
+												echo "<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
+												if ($row->sconto != 0) {
+													$Sconto = ($row->Prezzo / 100) * $row->sconto;
+													$prezzo = $row->Prezzo - $Sconto;
+													echo "<h4 class='product-price'>$prezzo €<del class='product-old-price'>$row->Prezzo €</del></h4>";
+												} else {
+													echo "<h4 class='product-price'>$prezzo €</h4>";
+												}
+												echo '<div class="product-rating">';
+												for ($i = 0; $i < 5; $i++) {
+													if ($i < $row->stelle) echo '<i class="fa fa-star"></i>';
+													else echo '<i class="fa fa-star-o"></i>';
+												}
+												echo '</div>';
+												echo '<div class="product-btns">
+									  <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
+									  </div>
+									  </div>';
+												echo '<div class="add-to-cart">';
 
-				<div class="clearfix visible-sm visible-xs"></div>
-
-				<!-- product -->
-				<div class="col-md-3 col-xs-6">
-					<div class="product">
-						<div class="product-img">
-							<img src="./img/product03.png" alt="">
-						</div>
-						<div class="product-body">
-							<p class="product-category">Category</p>
-							<h3 class="product-name"><a href="#">product name goes here</a></h3>
-							<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-							<div class="product-rating">
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star-o"></i>
+												if ($row->QuantitaDisp > 0) {
+													echo "<a href='AddProduct.php?IDarticolo=$row->ID&quantita=1&Pagina=index.php'>";
+													echo '<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>';
+													echo '</a>';
+												} else
+													echo '<div class="footer"><h6 class="footer-title">Scorte Finite</h6></div>';
+												echo '</div>';
+												echo '</div>';
+											}
+										}
+									}
+								}
+								?>
 							</div>
-							<div class="product-btns">
-								<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-								<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-								<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-							</div>
-						</div>
-						<div class="add-to-cart">
-							<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
 						</div>
 					</div>
 				</div>
-				<!-- /product -->
-
-				<!-- product -->
-				<div class="col-md-3 col-xs-6">
-					<div class="product">
-						<div class="product-img">
-							<img src="./img/product04.png" alt="">
-						</div>
-						<div class="product-body">
-							<p class="product-category">Category</p>
-							<h3 class="product-name"><a href="#">product name goes here</a></h3>
-							<h4 class="product-price">$980.00 <del class="product-old-price">$990.00</del></h4>
-							<div class="product-rating">
-							</div>
-							<div class="product-btns">
-								<button class="add-to-wishlist"><i class="fa fa-heart-o"></i><span class="tooltipp">add to wishlist</span></button>
-								<button class="add-to-compare"><i class="fa fa-exchange"></i><span class="tooltipp">add to compare</span></button>
-								<button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-							</div>
-						</div>
-						<div class="add-to-cart">
-							<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>
-						</div>
-					</div>
-				</div>
-				<!-- /product -->
-
+				<!-- /row -->
 			</div>
-			<!-- /row -->
+			<!-- /container -->
 		</div>
-		<!-- /container -->
-	</div>
-	<!-- /Section -->
+		<!-- /Section -->
 
-	<!-- NEWSLETTER -->
-	<div id="newsletter" class="section">
-		<!-- container -->
-		<div class="container">
-			<!-- row -->
-			<div class="row">
-				<div class="col-md-12">
-					<div class="newsletter">
-						<p>Sign Up for the <strong>NEWSLETTER</strong></p>
-						<form>
-							<input class="input" type="email" placeholder="Enter Your Email">
-							<button class="newsletter-btn"><i class="fa fa-envelope"></i> Subscribe</button>
-						</form>
-						<ul class="newsletter-follow">
-							<li>
-								<a href="#"><i class="fa fa-facebook"></i></a>
-							</li>
-							<li>
-								<a href="#"><i class="fa fa-twitter"></i></a>
-							</li>
-							<li>
-								<a href="#"><i class="fa fa-instagram"></i></a>
-							</li>
-							<li>
-								<a href="#"><i class="fa fa-pinterest"></i></a>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-			<!-- /row -->
-		</div>
-		<!-- /container -->
-	</div>
-	<!-- /NEWSLETTER -->
-
-	<!-- FOOTER -->
+		<!-- FOOTER -->
 	<footer id="footer">
 		<!-- top footer -->
 		<div class="section">
@@ -741,55 +620,42 @@ include("SetUp/CookiesSET.php");
 			<div class="container">
 				<!-- row -->
 				<div class="row">
-					<div class="col-md-3 col-xs-6">
+					<div class="col-md-4 col-xs-6">
 						<div class="footer">
 							<h3 class="footer-title">About Us</h3>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p>
+							<p>Skamazon è una piccola azienda ideata da un ragazzo molto pigro</p>
 							<ul class="footer-links">
-								<li><a href="#"><i class="fa fa-map-marker"></i>1734 Stonecoal Road</a></li>
-								<li><a href="#"><i class="fa fa-phone"></i>+021-95-51-84</a></li>
-								<li><a href="#"><i class="fa fa-envelope-o"></i>email@email.com</a></li>
+								<li><a href="#"><i class="fa fa-map-marker"></i>Via inventata</a></li>
+								<li><a href="#"><i class="fa fa-phone"></i>Numero Bello</a></li>
+								<li><a href="#"><i class="fa fa-envelope-o"></i>emailBella@email.com</a></li>
 							</ul>
 						</div>
 					</div>
 
-					<div class="col-md-3 col-xs-6">
+					<div class="col-md-4 col-xs-6">
 						<div class="footer">
 							<h3 class="footer-title">Categories</h3>
 							<ul class="footer-links">
-								<li><a href="#">Hot deals</a></li>
-								<li><a href="#">Laptops</a></li>
-								<li><a href="#">Smartphones</a></li>
-								<li><a href="#">Cameras</a></li>
-								<li><a href="#">Accessories</a></li>
+								<li><a href="index.php">Home</a></li>
+								<li><a href='store.php?categoria=New'>New</a></li>
+								<li><a href='store.php?categoria=Hot Deals'>Hot Deals</a></li>
+								<li><a href='store.php?categoria=Electronics'>Electronics</a></li>
+								<li><a href='store.php?categoria=House'>House</a></li>
+								<li><a href='store.php?categoria=Motors'>Motors</a></li>
+								<li><a href='store.php?categoria=Top Selling'>Top Selling</a></li>
 							</ul>
 						</div>
 					</div>
 
 					<div class="clearfix visible-xs"></div>
 
-					<div class="col-md-3 col-xs-6">
-						<div class="footer">
-							<h3 class="footer-title">Information</h3>
-							<ul class="footer-links">
-								<li><a href="#">About Us</a></li>
-								<li><a href="#">Contact Us</a></li>
-								<li><a href="#">Privacy Policy</a></li>
-								<li><a href="#">Orders and Returns</a></li>
-								<li><a href="#">Terms & Conditions</a></li>
-							</ul>
-						</div>
-					</div>
-
-					<div class="col-md-3 col-xs-6">
+					<div class="col-md-4 col-xs-6">
 						<div class="footer">
 							<h3 class="footer-title">Service</h3>
 							<ul class="footer-links">
-								<li><a href="#">My Account</a></li>
+								<li><a href="account.php">My Account</a></li>
 								<li><a href="#">View Cart</a></li>
-								<li><a href="#">Wishlist</a></li>
-								<li><a href="#">Track My Order</a></li>
-								<li><a href="#">Help</a></li>
+								<li><a href="img/troll.jpg">Help</a></li>
 							</ul>
 						</div>
 					</div>
@@ -831,13 +697,13 @@ include("SetUp/CookiesSET.php");
 	</footer>
 	<!-- /FOOTER -->
 
-	<!-- jQuery Plugins -->
-	<script src="js/jquery.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-	<script src="js/slick.min.js"></script>
-	<script src="js/nouislider.min.js"></script>
-	<script src="js/jquery.zoom.min.js"></script>
-	<script src="js/main.js"></script>
+		<!-- jQuery Plugins -->
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/slick.min.js"></script>
+		<script src="js/nouislider.min.js"></script>
+		<script src="js/jquery.zoom.min.js"></script>
+		<script src="js/main.js"></script>
 
 </body>
 
