@@ -17,8 +17,8 @@ if (!isset($_COOKIE["IDcarrelloCOOKIES"])) {
     //se esiste mi salvo l'id del carrello
     $cookie_value = $_COOKIE["IDcarrelloCOOKIES"];
 }
-//controllo se esiste una sessione
-if (!isset($_SESSION["IDutente"])) {
+//controllo se esiste un utente
+if (!isset($_SESSION["IDutente"]) || ($_SESSION["IDutente"]=="" || $_SESSION["IDutente"]==null)) {
     //se non esiste controllo che l'id del carrello non sia assegnato ad un utente con accesso
     $sql = $conn->prepare("SELECT ID FROM carrello where IdUtente is null and ID = ?");
     $sql->bind_param("i", $cookie_value);

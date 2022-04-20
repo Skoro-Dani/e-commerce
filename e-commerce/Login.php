@@ -85,7 +85,7 @@ include("SetUp/CookiesSET.php");
 						<div class="header-ctn">
 							<!-- My account -->
 							<div>
-								<a href="account.php">
+								<a href="Account.php">
 									<i class="fa fa-user-o"></i>
 									<span>My Account</span>
 								</a>
@@ -98,13 +98,14 @@ include("SetUp/CookiesSET.php");
 									<i class="fa fa-shopping-cart"></i>
 									<span>My Cart</span>
 									<?php
-									$sql = $conn->prepare("SELECT count(*) as c FROM contiene WHERE " . $_SESSION['IDcarrello']);
+									$sql = $conn->prepare("SELECT COUNT(*) as c FROM contiene WHERE IdCarrello = " . $_SESSION['IDcarrello']);
 									$sql->execute();
 									$result = $sql->get_result();
 									if ($result !== false && $result->num_rows > 0) {
 										if ($row = $result->fetch_object()) {
 											if ($row->c > 0) {
 												echo "<div class='qty'>";
+												//echo $_SESSION["IDcarelloo"];
 												echo $row->c;
 												echo "</div>";
 											}
@@ -115,7 +116,7 @@ include("SetUp/CookiesSET.php");
 								<div class="cart-dropdown">
 									<div class="cart-list">
 										<?php
-										$sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID join imgsrc on articoli.ID = imgsrc.ID  WHERE " . $_SESSION['IDcarrello']);
+										$sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID join imgsrc on articoli.ID = imgsrc.ID  where IdCarrello = " . $_SESSION['IDcarrello']);
 										$sql->execute();
 										$result = $sql->get_result();
 										if ($result !== false && $result->num_rows > 0) {
@@ -136,23 +137,25 @@ include("SetUp/CookiesSET.php");
 										?>
 									</div>
 									<?php
-									$sql = $conn->prepare("SELECT * FROM contiene  join  articoli on contiene.IdArticolo = articoli.ID WHERE " . $_SESSION['IDcarrello']);
+									$sql = $conn->prepare("SELECT * FROM contiene  join  articoli on contiene.IdArticolo = articoli.ID WHERE IdCarrello = " . $_SESSION['IDcarrello']);
 									$sql->execute();
 									$result = $sql->get_result();
 									$total = 0;
 									echo '<div class="cart-summary">';
 									if ($result !== false && $result->num_rows > 0) {
-										if ($row = $result->fetch_object()) {
-											$total += ($row->quantita * $row->Prezzo);
-											echo "	<small>$result->num_rows Item(s) selected</small>";
+										for ($j = 0; $j < $result->num_rows; $j++) {
+											if ($row = $result->fetch_object()) {
+												$total += ($row->quantita * $row->Prezzo);
+											}
 										}
+										echo "	<small>$result->num_rows Item(s) selected</small>";
 									}
-									echo "<h5>SUBTOTAL: $total</h5>";
+									echo "<h5>SUBTOTAL: $total €</h5>";
 									echo "</div>"
 									?>
 									<div class="cart-btns">
-										<a href="#">View Cart</a>
-										<a href="#">Checkout <i class="fa fa-arrow-circle-right"></i></a>
+										<a href="Carello.php">View Cart</a>
+										<a href="Checkout.php">Checkout <i class="fa fa-arrow-circle-right"></i></a>
 									</div>
 								</div>
 							</div>
@@ -212,6 +215,9 @@ include("SetUp/CookiesSET.php");
 					<!-- Billing Details -->
 
 					<div class="billing-details">
+						<?php
+						if (isset($_GET["msg"]) && $_GET["msg"] != "") echo "<div class='alert alert-danger' role='alert'>" . $_GET['msg'] . "  </div>";
+						?>
 						<Form action="chkLogin.php" method="post">
 							<div class="section-title">
 								<h3 class="title">Login</h3>

@@ -116,7 +116,7 @@ include("SetUp/CookiesSET.php");
 								<div class="cart-dropdown">
 									<div class="cart-list">
 										<?php
-										$sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID join imgsrc on articoli.ID = imgsrc.ID  where IdCarrello = " . $_SESSION['IDcarrello']);
+										$sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID join imgsrc on articoli.ID = imgsrc.IDarticolo  where IdCarrello = " . $_SESSION['IDcarrello'] . " Group By articoli.ID ");
 										$sql->execute();
 										$result = $sql->get_result();
 										if ($result !== false && $result->num_rows > 0) {
@@ -235,46 +235,11 @@ include("SetUp/CookiesSET.php");
 			<div class="row">
 				<!-- STORE -->
 				<div id="store" class="col-md-9">
-					<!-- store top filter -->
-					<div class="store-filter clearfix">
-						<div class="store-sort">
-							<label>
-								Sort By:
-								<select class="input-select" onchange="OrderBy(value)">
-									<option value="1"></option>
-									<option value="2">Prezzo crescente</option>
-									<option value="3">Prezzo Decrescente</option>
-								</select>
-							</label>
-						</div>
-					</div>
-					<!-- /store top filter -->
-
 					<!-- store products -->
 					<div class="row">
 						<!-- product -->
 						<?php
-						$ris = "";
-						if (isset($_GET["OrderBy"])) {
-							switch ($_GET["OrderBy"]) {
-								default:
-									$ris = "";
-									break;
-								case 1:
-									$ris = "";
-									break;
-								case 2:
-									$ris .= " ORDER BY Prezzo";
-									break;
-								case 3:
-									$ris .=  "ORDER BY Prezzo DESC";
-									break;
-							}
-						}
-						if (isset($_GET["SearchBar"])) {
-							$sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%')" . $ris);
-							$sql->bind_param('s', $_GET["SearchBar"]);
-						} else $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID " . $ris);
+						$sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID join imgsrc on articoli.ID = imgsrc.IDarticolo  where IdCarrello = " . $_SESSION['IDcarrello'] . " Group By articoli.ID ");
 						$sql->execute();
 						$result = $sql->get_result();
 						$Fine = 20;
@@ -297,7 +262,7 @@ include("SetUp/CookiesSET.php");
 									echo '</div>';
 									echo '<div class="product-body">';
 									echo '<p class="product-category">Category</p>';
-									echo "<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
+									echo "<h3 class='product-name'><a href='product.php?ID=$row->IdArticolo'>$row->Nome</a></h3>";
 									if ($row->sconto != 0) {
 										$Sconto = ($row->Prezzo / 100) * $row->sconto;
 										$prezzo = $row->Prezzo - $Sconto;
@@ -316,13 +281,9 @@ include("SetUp/CookiesSET.php");
 											      </div>
 											      </div>';
 									echo '<div class="add-to-cart">';
-
-									if ($row->QuantitaDisp > 0) {
-										echo "<a href='AddProduct.php?IDarticolo=$row->ID&quantita=1&Pagina=index.php'>";
-										echo '<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>';
-										echo '</a>';
-									} else
-										echo '<div class="footer"><h6 class="footer-title">Scorte Finite</h6></div>';
+									echo "<a href='DelFCart.php?IDarticolo=$row->IdArticolo&Pagina=Carello.php'>";
+									echo '<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i>Remove From Cart</button>';
+									echo '</a>';
 									echo '</div>';
 									echo '</div>';
 									echo '</div>';
