@@ -1,6 +1,7 @@
 <?php
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
+include("Funzioni.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,143 +44,143 @@ include("SetUp/CookiesSET.php");
 
 <body>
     <!-- HEADER -->
-	<header>
-		<!-- MAIN HEADER -->
-		<div id="header">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
-					<!-- LOGO -->
-					<div class="col-md-2">
-						<div class="header-logo">
-							<a href="#" class="logo">
-								<img src="./img/logo.png" alt="">
-							</a>
-						</div>
-					</div>
-					<!-- /LOGO -->
+    <header>
+        <!-- MAIN HEADER -->
+        <div id="header">
+            <!-- container -->
+            <div class="container">
+                <!-- row -->
+                <div class="row">
+                    <!-- LOGO -->
+                    <div class="col-md-2">
+                        <div class="header-logo">
+                            <a href="#" class="logo">
+                                <img src="./img/logo.png" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <!-- /LOGO -->
 
-					<!-- SEARCH BAR -->
-					<div class="col-md-7">
-						<div class="header-search">
-							<form action="store.php" method="get">
-								<select class="input-select" name="categorie">
-									<option>All Categories</option>
-									<option>New</option>
-									<option>Hot Deals</option>
-									<option>Electronics</option>
-									<option>House</option>
-									<option>Motors</option>
-									<option>Top Selling</option>
-								</select>
-								<input class="input" placeholder="Search here" name="SearchBar">
-								<button class="search-btn">Search</button>
-							</form>
-						</div>
-					</div>
-					<!-- /SEARCH BAR -->
+                    <!-- SEARCH BAR -->
+                    <div class="col-md-7">
+                        <div class="header-search">
+                            <form action="store.php" method="get">
+                                <select class="input-select" name="categorie">
+                                    <option>All Categories</option>
+                                    <option>New</option>
+                                    <option>Hot Deals</option>
+                                    <option>Electronics</option>
+                                    <option>House</option>
+                                    <option>Motors</option>
+                                    <option>Top Selling</option>
+                                </select>
+                                <input class="input" placeholder="Search here" name="SearchBar">
+                                <button class="search-btn">Search</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- /SEARCH BAR -->
 
-					<!-- ACCOUNT -->
-					<div class="col-md-3 clearfix">
-						<div class="header-ctn">
-							<!-- My account -->
-							<div>
-								<a href="Account.php">
-									<i class="fa fa-user-o"></i>
-									<span>My Account</span>
-								</a>
-							</div>
-							<!-- /My account -->
+                    <!-- ACCOUNT -->
+                    <div class="col-md-3 clearfix">
+                        <div class="header-ctn">
+                            <!-- My account -->
+                            <div>
+                                <a href="Account.php">
+                                    <i class="fa fa-user-o"></i>
+                                    <span>My Account</span>
+                                </a>
+                            </div>
+                            <!-- /My account -->
 
-							<!-- Cart -->
-							<div class="dropdown">
-								<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-									<i class="fa fa-shopping-cart"></i>
-									<span>My Cart</span>
-									<?php
-									$sql = $conn->prepare("SELECT COUNT(*) as c FROM contiene WHERE IdCarrello = " . $_SESSION['IDcarrello']);
-									$sql->execute();
-									$result = $sql->get_result();
-									if ($result !== false && $result->num_rows > 0) {
-										if ($row = $result->fetch_object()) {
-											if ($row->c > 0) {
-												echo "<div class='qty'>";
-												//echo $_SESSION["IDcarelloo"];
-												echo $row->c;
-												echo "</div>";
-											}
-										}
-									}
-									?>
-								</a>
-								<div class="cart-dropdown">
-									<div class="cart-list">
-										<?php
-										$sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID join imgsrc on articoli.ID = imgsrc.ID  where IdCarrello = " . $_SESSION['IDcarrello']);
-										$sql->execute();
-										$result = $sql->get_result();
-										if ($result !== false && $result->num_rows > 0) {
-											for ($j = 0; $j < $result->num_rows; $j++) {
-												if ($row = $result->fetch_object()) {
-													echo '<div class="product-widget">';
-													echo '	<div class="product-img">';
-													echo "		<img src='./img/$row->source' alt=''>";
-													echo '	</div>';
-													echo '	<div class="product-body">';
-													echo "		<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
-													echo "		<h4 class='product-price'><span class='qty'>$row->quantita x</span>$row->Prezzo €</h4>";
-													echo '	</div>';
-													echo '</div>';
-												}
-											}
-										}
-										?>
-									</div>
-									<?php
-									$sql = $conn->prepare("SELECT * FROM contiene  join  articoli on contiene.IdArticolo = articoli.ID WHERE IdCarrello = " . $_SESSION['IDcarrello']);
-									$sql->execute();
-									$result = $sql->get_result();
-									$total = 0;
-									echo '<div class="cart-summary">';
-									if ($result !== false && $result->num_rows > 0) {
-										for ($j = 0; $j < $result->num_rows; $j++) {
-											if ($row = $result->fetch_object()) {
-												$total += ($row->quantita * $row->Prezzo);
-											}
-										}
-										echo "	<small>$result->num_rows Item(s) selected</small>";
-									}
-									echo "<h5>SUBTOTAL: $total €</h5>";
-									echo "</div>"
-									?>
-									<div class="cart-btns">
-										<a href="Carello.php">View Cart</a>
-										<a href="Checkout.php">Checkout <i class="fa fa-arrow-circle-right"></i></a>
-									</div>
-								</div>
-							</div>
-							<!-- /Cart -->
+                            <!-- Cart -->
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span>My Cart</span>
+                                    <?php
+                                    $sql = $conn->prepare("SELECT COUNT(*) as c FROM contiene WHERE IdCarrello = " . $_SESSION['IDcarrello']);
+                                    $sql->execute();
+                                    $result = $sql->get_result();
+                                    if ($result !== false && $result->num_rows > 0) {
+                                        if ($row = $result->fetch_object()) {
+                                            if ($row->c > 0) {
+                                                echo "<div class='qty'>";
+                                                //echo $_SESSION["IDcarelloo"];
+                                                echo $row->c;
+                                                echo "</div>";
+                                            }
+                                        }
+                                    }
+                                    ?>
+                                </a>
+                                <div class="cart-dropdown">
+                                    <div class="cart-list">
+                                        <?php
+                                        $sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID join imgsrc on articoli.ID = imgsrc.ID  where IdCarrello = " . $_SESSION['IDcarrello']);
+                                        $sql->execute();
+                                        $result = $sql->get_result();
+                                        if ($result !== false && $result->num_rows > 0) {
+                                            for ($j = 0; $j < $result->num_rows; $j++) {
+                                                if ($row = $result->fetch_object()) {
+                                                    echo '<div class="product-widget">';
+                                                    echo '	<div class="product-img">';
+                                                    echo "		<img src='./img/$row->source' alt=''>";
+                                                    echo '	</div>';
+                                                    echo '	<div class="product-body">';
+                                                    echo "		<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
+                                                    echo "		<h4 class='product-price'><span class='qty'>$row->quantita x</span>$row->Prezzo €</h4>";
+                                                    echo '	</div>';
+                                                    echo '</div>';
+                                                }
+                                            }
+                                        }
+                                        ?>
+                                    </div>
+                                    <?php
+                                    $sql = $conn->prepare("SELECT * FROM contiene  join  articoli on contiene.IdArticolo = articoli.ID WHERE IdCarrello = " . $_SESSION['IDcarrello']);
+                                    $sql->execute();
+                                    $result = $sql->get_result();
+                                    $total = 0;
+                                    echo '<div class="cart-summary">';
+                                    if ($result !== false && $result->num_rows > 0) {
+                                        for ($j = 0; $j < $result->num_rows; $j++) {
+                                            if ($row = $result->fetch_object()) {
+                                                $total += ($row->quantita * $row->Prezzo);
+                                            }
+                                        }
+                                        echo "	<small>$result->num_rows Item(s) selected</small>";
+                                    }
+                                    echo "<h5>SUBTOTAL: $total €</h5>";
+                                    echo "</div>"
+                                    ?>
+                                    <div class="cart-btns">
+                                        <a href="Carello.php">View Cart</a>
+                                        <a href="Checkout.php">Checkout <i class="fa fa-arrow-circle-right"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Cart -->
 
-							<!-- Menu Toogle -->
-							<div class="menu-toggle">
-								<a href="#">
-									<i class="fa fa-bars"></i>
-									<span>Menu</span>
-								</a>
-							</div>
-							<!-- /Menu Toogle -->
-						</div>
-					</div>
-					<!-- /ACCOUNT -->
-				</div>
-				<!-- row -->
-			</div>
-			<!-- container -->
-		</div>
-		<!-- /MAIN HEADER -->
-	</header>
-	<!-- /HEADER -->
+                            <!-- Menu Toogle -->
+                            <div class="menu-toggle">
+                                <a href="#">
+                                    <i class="fa fa-bars"></i>
+                                    <span>Menu</span>
+                                </a>
+                            </div>
+                            <!-- /Menu Toogle -->
+                        </div>
+                    </div>
+                    <!-- /ACCOUNT -->
+                </div>
+                <!-- row -->
+            </div>
+            <!-- container -->
+        </div>
+        <!-- /MAIN HEADER -->
+    </header>
+    <!-- /HEADER -->
 
     <!-- NAVIGATION -->
     <nav id="navigation">

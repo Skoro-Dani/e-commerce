@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Apr 18, 2022 alle 20:00
+-- Creato il: Apr 20, 2022 alle 21:34
 -- Versione del server: 10.4.21-MariaDB
 -- Versione PHP: 8.0.12
 
@@ -46,10 +46,10 @@ CREATE TABLE `articoli` (
 
 INSERT INTO `articoli` (`ID`, `Nome`, `DescShort`, `DescLong`, `QuantitaDisp`, `Prezzo`, `Venditore`, `sconto`, `Categorie`, `stelle`) VALUES
 (1, 'login', 'Schreenshot della pagina di login ', 'questa preziosa immagine rappresenta la pagina di login di una misteriosa applicazione e starà a te scoprire che applicazione è', 3, 100, 'SKamazon', 0, 'Electronics', 0),
-(2, 'Computer x1000', 'Computer di una marca non meglio specifica', 'questo potentissimo computer di cui non si sa la marca è super op.', 0, 10000, 'SKamazon', 20, 'New,Top Selling', 3),
-(3, 'Cuffie Gaming', 'Delle cuffie over 9000', 'Cuffie adatte alle più svariate ore di gioco', 8, 20000, 'SKamazon', 10, 'New', 5),
-(4, 'Falso MacBook', 'Un MacBook abbastanza falso, ma ha OSx', 'non c\'è nulla da dire a parte che siete dei poveracci', 5, 350, 'SKamazon', 0, 'New', 2),
-(5, 'Ipad tarocco', 'Come si puo vedere non esprime molta fiducia, ma vi assicuro che fa il suo lavoro', 'Un Ipad un po molto tarocco, ma tranquilli con il suo enorme processore mai sentito fa un ottimo lavoro', 10, 50, 'SKamazon', 0, 'New,Hot Deals', 5);
+(2, 'Computer x1000', 'Computer di una marca non meglio specifica', 'questo potentissimo computer di cui non si sa la marca è super op.', 0, 10000, 'SKamazon', 20, 'New,Top Selling', 4),
+(3, 'Cuffie Gaming', 'Delle cuffie over 9000', 'Cuffie adatte alle più svariate ore di gioco', 8, 20000, 'SKamazon', 10, 'New', 0),
+(4, 'Falso MacBook', 'Un MacBook abbastanza falso, ma ha OSx', 'non c\'è nulla da dire a parte che siete dei poveracci', 5, 350, 'SKamazon', 0, 'New', 0),
+(5, 'Ipad tarocco', 'Come si puo vedere non esprime molta fiducia, ma vi assicuro che fa il suo lavoro', 'Un Ipad un po molto tarocco, ma tranquilli con il suo enorme processore mai sentito fa un ottimo lavoro', 10, 50, 'SKamazon', 0, 'New,Hot Deals', 0);
 
 -- --------------------------------------------------------
 
@@ -101,9 +101,16 @@ CREATE TABLE `commento` (
   `IdArticolo` int(11) NOT NULL,
   `IdUtente` int(11) NOT NULL,
   `AcquistoVerificato` tinyint(1) NOT NULL DEFAULT 0,
-  `nome` varchar(32) NOT NULL,
-  `testo` text NOT NULL
+  `testo` text NOT NULL,
+  `stelleCommento` int(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dump dei dati per la tabella `commento`
+--
+
+INSERT INTO `commento` (`ID`, `IdArticolo`, `IdUtente`, `AcquistoVerificato`, `testo`, `stelleCommento`) VALUES
+(1, 2, 1, 0, 'Questo mega fantastico computer', 4);
 
 -- --------------------------------------------------------
 
@@ -123,8 +130,8 @@ CREATE TABLE `contiene` (
 --
 
 INSERT INTO `contiene` (`ID`, `IdArticolo`, `IdCarrello`, `quantita`) VALUES
-(1, 1, 19, 1),
-(2, 2, 19, 18);
+(16, 1, 1, 1),
+(17, 2, 1, 18);
 
 -- --------------------------------------------------------
 
@@ -300,13 +307,13 @@ ALTER TABLE `categoria`
 -- AUTO_INCREMENT per la tabella `commento`
 --
 ALTER TABLE `commento`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT per la tabella `contiene`
 --
 ALTER TABLE `contiene`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT per la tabella `imgsrc`

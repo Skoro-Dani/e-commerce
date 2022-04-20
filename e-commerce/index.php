@@ -1,6 +1,7 @@
 <?php
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
+include("Funzioni.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -98,60 +99,17 @@ include("SetUp/CookiesSET.php");
 									<i class="fa fa-shopping-cart"></i>
 									<span>My Cart</span>
 									<?php
-									$sql = $conn->prepare("SELECT COUNT(*) as c FROM contiene WHERE IdCarrello = " . $_SESSION['IDcarrello']);
-									$sql->execute();
-									$result = $sql->get_result();
-									if ($result !== false && $result->num_rows > 0) {
-										if ($row = $result->fetch_object()) {
-											if ($row->c > 0) {
-												echo "<div class='qty'>";
-												//echo $_SESSION["IDcarelloo"];
-												echo $row->c;
-												echo "</div>";
-											}
-										}
-									}
+									VisualizzaCarrelloNum();
 									?>
 								</a>
 								<div class="cart-dropdown">
 									<div class="cart-list">
 										<?php
-										$sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID join imgsrc on articoli.ID = imgsrc.ID  where IdCarrello = " . $_SESSION['IDcarrello']);
-										$sql->execute();
-										$result = $sql->get_result();
-										if ($result !== false && $result->num_rows > 0) {
-											for ($j = 0; $j < $result->num_rows; $j++) {
-												if ($row = $result->fetch_object()) {
-													echo '<div class="product-widget">';
-													echo '	<div class="product-img">';
-													echo "		<img src='./img/$row->source' alt=''>";
-													echo '	</div>';
-													echo '	<div class="product-body">';
-													echo "		<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
-													echo "		<h4 class='product-price'><span class='qty'>$row->quantita x</span>$row->Prezzo €</h4>";
-													echo '	</div>';
-													echo '</div>';
-												}
-											}
-										}
+										VisualizzaCarrelloTendina();
 										?>
 									</div>
 									<?php
-									$sql = $conn->prepare("SELECT * FROM contiene  join  articoli on contiene.IdArticolo = articoli.ID WHERE IdCarrello = " . $_SESSION['IDcarrello']);
-									$sql->execute();
-									$result = $sql->get_result();
-									$total = 0;
-									echo '<div class="cart-summary">';
-									if ($result !== false && $result->num_rows > 0) {
-										for ($j = 0; $j < $result->num_rows; $j++) {
-											if ($row = $result->fetch_object()) {
-												$total += ($row->quantita * $row->Prezzo);
-											}
-										}
-										echo "	<small>$result->num_rows Item(s) selected</small>";
-									}
-									echo "<h5>SUBTOTAL: $total €</h5>";
-									echo "</div>"
+									VisualizzaCarrelloRisultato();
 									?>
 									<div class="cart-btns">
 										<a href="Carello.php">View Cart</a>
@@ -189,13 +147,35 @@ include("SetUp/CookiesSET.php");
 			<div id="responsive-nav">
 				<!-- NAV -->
 				<ul class="main-nav nav navbar-nav">
-					<li class="active"><a href="index.php">Home</a></li>
-					<li><a href='store.php?categoria=New'>New</a></li>
-					<li><a href='store.php?categoria=Hot Deals'>Hot Deals</a></li>
-					<li><a href='store.php?categoria=Electronics'>Electronics</a></li>
-					<li><a href='store.php?categoria=House'>House</a></li>
-					<li><a href='store.php?categoria=Motors'>Motors</a></li>
-					<li><a href='store.php?categoria=Top Selling'>Top Selling</a></li>
+					<li><a href="index.php">Home</a></li>
+					<?php
+					if (isset($_GET["categoria"])) {
+						$categoria = $_GET["categoria"];
+						if ($categoria == "New") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=New'>New</a></li>";
+
+						if ($categoria == "Hot Deals") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=Hot Deals'>Hot Deals</a></li>";
+
+						if ($categoria == "Electronics") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=Electronics'>Electronics</a></li>";
+
+						if ($categoria == "House") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=House'>House</a></li>";
+
+						if ($categoria == "Motors") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=Motors'>Motors</a></li>";
+
+						if ($categoria == "Top Selling") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=Top Selling'>Top Selling</a></li>";
+					}
+					?>
 				</ul>
 				<!-- /NAV -->
 			</div>
@@ -228,53 +208,7 @@ include("SetUp/CookiesSET.php");
 							<div id="tab1" class="tab-pane active">
 								<div class="products-slick" data-nav="#slick-nav-1">
 									<?php
-									$sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%','New','%') ");
-									$sql->execute();
-									$result = $sql->get_result();
-
-									if ($result !== false && $result->num_rows > 0) {
-										for ($j = 0; $j < $result->num_rows; $j++) {
-											if ($row = $result->fetch_object()) {
-												echo '<div class="product">';
-												echo '<div class="product-img">';
-												echo "<img src='./img/$row->source' alt=''>";
-												echo '<div class="product-label">
-													  <span class="new">NEW</span>
-												  	  </div>';
-												echo '</div>';
-												echo '<div class="product-body">';
-												echo '<p class="product-category">Category</p>';
-												echo "<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
-												if ($row->sconto != 0) {
-													$Sconto = ($row->Prezzo / 100) * $row->sconto;
-													$prezzo = $row->Prezzo - $Sconto;
-													echo "<h4 class='product-price'>$prezzo €<del class='product-old-price'>$row->Prezzo €</del></h4>";
-												} else {
-													echo "<h4 class='product-price'>$prezzo €</h4>";
-												}
-												echo '<div class="product-rating">';
-												for ($i = 0; $i < 5; $i++) {
-													if ($i < $row->stelle) echo '<i class="fa fa-star"></i>';
-													else echo '<i class="fa fa-star-o"></i>';
-												}
-												echo '</div>';
-												echo '<div class="product-btns">
-												  <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-											      </div>
-											      </div>';
-												echo '<div class="add-to-cart">';
-
-												if ($row->QuantitaDisp > 0) {
-													echo "<a href='AddProduct.php?IDarticolo=$row->ID&quantita=1&Pagina=index.php'>";
-													echo '<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>';
-													echo '</a>';
-												} else
-													echo '<div class="footer"><h6 class="footer-title">Scorte Finite</h6></div>';
-												echo '</div>';
-												echo '</div>';
-											}
-										}
-									}
+										StampArticoli("New");
 									?>
 									<!-- /product -->
 								</div>
@@ -314,52 +248,7 @@ include("SetUp/CookiesSET.php");
 								<div class="products-slick" data-nav="#slick-nav-2">
 									<!-- product -->
 									<?php
-									$sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%','Top Selling','%') ");
-									$sql->execute();
-									$result = $sql->get_result();
-
-									if ($result !== false && $result->num_rows > 0) {
-										for ($j = 0; $j < $result->num_rows; $j++) {
-											if ($row = $result->fetch_object()) {
-												echo '<div class="product">';
-												echo '<div class="product-img">';
-												echo "<img src='./img/$row->source' alt=''>";
-												echo '<div class="product-label">
-													  <span class="new">NEW</span>
-												  	  </div>';
-												echo '</div>';
-												echo '<div class="product-body">';
-												echo '<p class="product-category">Category</p>';
-												echo "<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
-												if ($row->sconto != 0) {
-													$Sconto = ($row->Prezzo / 100) * $row->sconto;
-													$prezzo = $row->Prezzo - $Sconto;
-													echo "<h4 class='product-price'>$prezzo €<del class='product-old-price'>$row->Prezzo €</del></h4>";
-												} else {
-													echo "<h4 class='product-price'>$prezzo €</h4>";
-												}
-												echo '<div class="product-rating">';
-												for ($i = 0; $i < 5; $i++) {
-													if ($i < $row->stelle) echo '<i class="fa fa-star"></i>';
-													else echo '<i class="fa fa-star-o"></i>';
-												}
-												echo '</div>';
-												echo '<div class="product-btns">
-												  <button class="quick-view"><i class="fa fa-eye"></i><span class="tooltipp">quick view</span></button>
-											      </div>
-											      </div>';
-												echo '<div class="add-to-cart">';
-												if ($row->QuantitaDisp > 0) {
-													echo "<a href='AddProduct.php?IDarticolo=$row->ID&quantita=1&Pagina=index.php'>";
-													echo '<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>';
-													echo '</a>';
-												} else
-													echo '<div class="footer"><h6 class="footer-title">Scorte Finite</h6></div>';
-												echo '</div>';
-												echo '</div>';
-											}
-										}
-									}
+									StampArticoli("Top Selling");
 									?>
 								</div>
 								<div id="slick-nav-2" class="products-slick-nav"></div>
@@ -393,32 +282,7 @@ include("SetUp/CookiesSET.php");
 					<div class="products-widget-slick" data-nav="#slick-nav-3">
 						<div>
 							<?php
-							$sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%','Top Selling','%') ");
-							$sql->execute();
-							$result = $sql->get_result();
-
-							if ($result !== false && $result->num_rows > 0) {
-								for ($j = 0; $j < $result->num_rows; $j++) {
-									if ($row = $result->fetch_object()) {
-										echo '<div class="product-widget">';
-										echo '	<div class="product-img">';
-										echo "		<img src='img/$row->source' alt=''>";
-										echo '	</div>';
-										echo '	<div class="product-body">';
-										echo '		<p class="product-category">Category</p>';
-										echo "		<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
-										if ($row->sconto != 0) {
-											$Sconto = ($row->Prezzo / 100) * $row->sconto;
-											$prezzo = $row->Prezzo - $Sconto;
-											echo "<h4 class='product-price'>$prezzo €<del class='product-old-price'>$row->Prezzo €</del></h4>";
-										} else {
-											echo "<h4 class='product-price'>$prezzo €</h4>";
-										}
-										echo '	</div>';
-										echo '</div>';
-									}
-								}
-							}
+								StampArticoliWidget("Top Selling")
 							?>
 
 						</div>
@@ -436,32 +300,7 @@ include("SetUp/CookiesSET.php");
 					<div class="products-widget-slick" data-nav="#slick-nav-3">
 						<div>
 							<?php
-							$sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%','Hot Deals','%') ");
-							$sql->execute();
-							$result = $sql->get_result();
-
-							if ($result !== false && $result->num_rows > 0) {
-								for ($j = 0; $j < $result->num_rows; $j++) {
-									if ($row = $result->fetch_object()) {
-										echo '<div class="product-widget">';
-										echo '	<div class="product-img">';
-										echo "		<img src='img/$row->source' alt=''>";
-										echo '	</div>';
-										echo '	<div class="product-body">';
-										echo '		<p class="product-category">Category</p>';
-										echo "		<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
-										if ($row->sconto != 0) {
-											$Sconto = ($row->Prezzo / 100) * $row->sconto;
-											$prezzo = $row->Prezzo - $Sconto;
-											echo "<h4 class='product-price'>$prezzo €<del class='product-old-price'>$row->Prezzo €</del></h4>";
-										} else {
-											echo "<h4 class='product-price'>$prezzo €</h4>";
-										}
-										echo '	</div>';
-										echo '</div>';
-									}
-								}
-							}
+							StampArticoliWidget("Hot Deals")
 							?>
 
 						</div>
@@ -481,32 +320,7 @@ include("SetUp/CookiesSET.php");
 					<div class="products-widget-slick" data-nav="#slick-nav-3">
 						<div>
 							<?php
-							$sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%','New','%') ");
-							$sql->execute();
-							$result = $sql->get_result();
-
-							if ($result !== false && $result->num_rows > 0) {
-								for ($j = 0; $j < $result->num_rows; $j++) {
-									if ($row = $result->fetch_object()) {
-										echo '<div class="product-widget">';
-										echo '	<div class="product-img">';
-										echo "		<img src='img/$row->source ' alt=''>";
-										echo '	</div>';
-										echo '	<div class="product-body">';
-										echo '		<p class="product-category">Category</p>';
-										echo "		<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
-										if ($row->sconto != 0) {
-											$Sconto = ($row->Prezzo / 100) * $row->sconto;
-											$prezzo = $row->Prezzo - $Sconto;
-											echo "<h4 class='product-price'>$prezzo €<del class='product-old-price'>$row->Prezzo €</del></h4>";
-										} else {
-											echo "<h4 class='product-price'>$prezzo €</h4>";
-										}
-										echo '	</div>';
-										echo '</div>';
-									}
-								}
-							}
+							StampArticoliWidget("New")
 							?>
 
 						</div>

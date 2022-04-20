@@ -1,6 +1,7 @@
 <?php
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
+include("Funzioni.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -98,60 +99,17 @@ include("SetUp/CookiesSET.php");
 									<i class="fa fa-shopping-cart"></i>
 									<span>My Cart</span>
 									<?php
-									$sql = $conn->prepare("SELECT COUNT(*) as c FROM contiene WHERE IdCarrello = " . $_SESSION['IDcarrello']);
-									$sql->execute();
-									$result = $sql->get_result();
-									if ($result !== false && $result->num_rows > 0) {
-										if ($row = $result->fetch_object()) {
-											if ($row->c > 0) {
-												echo "<div class='qty'>";
-												//echo $_SESSION["IDcarelloo"];
-												echo $row->c;
-												echo "</div>";
-											}
-										}
-									}
+									VisualizzaCarrelloNum();
 									?>
 								</a>
 								<div class="cart-dropdown">
 									<div class="cart-list">
 										<?php
-										$sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID join imgsrc on articoli.ID = imgsrc.ID  where IdCarrello = " . $_SESSION['IDcarrello']);
-										$sql->execute();
-										$result = $sql->get_result();
-										if ($result !== false && $result->num_rows > 0) {
-											for ($j = 0; $j < $result->num_rows; $j++) {
-												if ($row = $result->fetch_object()) {
-													echo '<div class="product-widget">';
-													echo '	<div class="product-img">';
-													echo "		<img src='./img/$row->source' alt=''>";
-													echo '	</div>';
-													echo '	<div class="product-body">';
-													echo "		<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
-													echo "		<h4 class='product-price'><span class='qty'>$row->quantita x</span>$row->Prezzo €</h4>";
-													echo '	</div>';
-													echo '</div>';
-												}
-											}
-										}
+										VisualizzaCarrelloTendina();
 										?>
 									</div>
 									<?php
-									$sql = $conn->prepare("SELECT * FROM contiene  join  articoli on contiene.IdArticolo = articoli.ID WHERE IdCarrello = " . $_SESSION['IDcarrello']);
-									$sql->execute();
-									$result = $sql->get_result();
-									$total = 0;
-									echo '<div class="cart-summary">';
-									if ($result !== false && $result->num_rows > 0) {
-										for ($j = 0; $j < $result->num_rows; $j++) {
-											if ($row = $result->fetch_object()) {
-												$total += ($row->quantita * $row->Prezzo);
-											}
-										}
-										echo "	<small>$result->num_rows Item(s) selected</small>";
-									}
-									echo "<h5>SUBTOTAL: $total €</h5>";
-									echo "</div>"
+									VisualizzaCarrelloRisultato();
 									?>
 									<div class="cart-btns">
 										<a href="Carello.php">View Cart</a>
@@ -189,13 +147,35 @@ include("SetUp/CookiesSET.php");
 			<div id="responsive-nav">
 				<!-- NAV -->
 				<ul class="main-nav nav navbar-nav">
-					<li class="active"><a href="index.php">Home</a></li>
-					<li><a href='store.php?categoria=New'>New</a></li>
-					<li><a href='store.php?categoria=Hot Deals'>Hot Deals</a></li>
-					<li><a href='store.php?categoria=Electronics'>Electronics</a></li>
-					<li><a href='store.php?categoria=House'>House</a></li>
-					<li><a href='store.php?categoria=Motors'>Motors</a></li>
-					<li><a href='store.php?categoria=Top Selling'>Top Selling</a></li>
+					<li><a href="index.php">Home</a></li>
+					<?php
+					if (isset($_GET["categoria"])) {
+						$categoria = $_GET["categoria"];
+						if ($categoria == "New") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=New'>New</a></li>";
+
+						if ($categoria == "Hot Deals") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=Hot Deals'>Hot Deals</a></li>";
+
+						if ($categoria == "Electronics") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=Electronics'>Electronics</a></li>";
+
+						if ($categoria == "House") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=House'>House</a></li>";
+
+						if ($categoria == "Motors") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=Motors'>Motors</a></li>";
+
+						if ($categoria == "Top Selling") echo "<li class='active'>";
+						else echo "<li>";
+						echo "<a href='store.php?categoria=Top Selling'>Top Selling</a></li>";
+					}
+					?>
 				</ul>
 				<!-- /NAV -->
 			</div>
@@ -238,100 +218,101 @@ include("SetUp/CookiesSET.php");
 			</div>
 			<!-- /container -->
 		</div>
-		<!-- /SECTION -->
+	</div>
+	<!-- /SECTION -->
 
-		<!-- FOOTER -->
-		<footer id="footer">
-			<!-- top footer -->
-			<div class="section">
-				<!-- container -->
-				<div class="container">
-					<!-- row -->
-					<div class="row">
-						<div class="col-md-4 col-xs-6">
-							<div class="footer">
-								<h3 class="footer-title">About Us</h3>
-								<p>Skamazon è una piccola azienda ideata da un ragazzo molto pigro</p>
-								<ul class="footer-links">
-									<li><a href="#"><i class="fa fa-map-marker"></i>Via inventata</a></li>
-									<li><a href="#"><i class="fa fa-phone"></i>Numero Bello</a></li>
-									<li><a href="#"><i class="fa fa-envelope-o"></i>emailBella@email.com</a></li>
-								</ul>
-							</div>
-						</div>
-
-						<div class="col-md-4 col-xs-6">
-							<div class="footer">
-								<h3 class="footer-title">Categories</h3>
-								<ul class="footer-links">
-									<li><a href="index.php">Home</a></li>
-									<li><a href='store.php?categoria=New'>New</a></li>
-									<li><a href='store.php?categoria=Hot Deals'>Hot Deals</a></li>
-									<li><a href='store.php?categoria=Electronics'>Electronics</a></li>
-									<li><a href='store.php?categoria=House'>House</a></li>
-									<li><a href='store.php?categoria=Motors'>Motors</a></li>
-									<li><a href='store.php?categoria=Top Selling'>Top Selling</a></li>
-								</ul>
-							</div>
-						</div>
-
-						<div class="clearfix visible-xs"></div>
-
-						<div class="col-md-4 col-xs-6">
-							<div class="footer">
-								<h3 class="footer-title">Service</h3>
-								<ul class="footer-links">
-									<li><a href="account.php">My Account</a></li>
-									<li><a href="#">View Cart</a></li>
-									<li><a href="img/troll.jpg">Help</a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-					<!-- /row -->
-				</div>
-				<!-- /container -->
-			</div>
-			<!-- /top footer -->
-
-			<!-- bottom footer -->
-			<div id="bottom-footer" class="section">
-				<div class="container">
-					<!-- row -->
-					<div class="row">
-						<div class="col-md-12 text-center">
-							<ul class="footer-payments">
-								<li><a href="#"><i class="fa fa-cc-visa"></i></a></li>
-								<li><a href="#"><i class="fa fa-credit-card"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-paypal"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-mastercard"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-discover"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-amex"></i></a></li>
+	<!-- FOOTER -->
+	<footer id="footer">
+		<!-- top footer -->
+		<div class="section">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<div class="col-md-4 col-xs-6">
+						<div class="footer">
+							<h3 class="footer-title">About Us</h3>
+							<p>Skamazon è una piccola azienda ideata da un ragazzo molto pigro</p>
+							<ul class="footer-links">
+								<li><a href="#"><i class="fa fa-map-marker"></i>Via inventata</a></li>
+								<li><a href="#"><i class="fa fa-phone"></i>Numero Bello</a></li>
+								<li><a href="#"><i class="fa fa-envelope-o"></i>emailBella@email.com</a></li>
 							</ul>
-							<span class="copyright">
-								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-								Copyright &copy;<script>
-									document.write(new Date().getFullYear());
-								</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-							</span>
 						</div>
 					</div>
-					<!-- /row -->
-				</div>
-				<!-- /container -->
-			</div>
-			<!-- /bottom footer -->
-		</footer>
-		<!-- /FOOTER -->
 
-		<!-- jQuery Plugins -->
-		<script src="js/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
-		<script src="js/slick.min.js"></script>
-		<script src="js/nouislider.min.js"></script>
-		<script src="js/jquery.zoom.min.js"></script>
-		<script src="js/main.js"></script>
+					<div class="col-md-4 col-xs-6">
+						<div class="footer">
+							<h3 class="footer-title">Categories</h3>
+							<ul class="footer-links">
+								<li><a href="index.php">Home</a></li>
+								<li><a href='store.php?categoria=New'>New</a></li>
+								<li><a href='store.php?categoria=Hot Deals'>Hot Deals</a></li>
+								<li><a href='store.php?categoria=Electronics'>Electronics</a></li>
+								<li><a href='store.php?categoria=House'>House</a></li>
+								<li><a href='store.php?categoria=Motors'>Motors</a></li>
+								<li><a href='store.php?categoria=Top Selling'>Top Selling</a></li>
+							</ul>
+						</div>
+					</div>
+
+					<div class="clearfix visible-xs"></div>
+
+					<div class="col-md-4 col-xs-6">
+						<div class="footer">
+							<h3 class="footer-title">Service</h3>
+							<ul class="footer-links">
+								<li><a href="account.php">My Account</a></li>
+								<li><a href="#">View Cart</a></li>
+								<li><a href="img/troll.jpg">Help</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /top footer -->
+
+		<!-- bottom footer -->
+		<div id="bottom-footer" class="section">
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<div class="col-md-12 text-center">
+						<ul class="footer-payments">
+							<li><a href="#"><i class="fa fa-cc-visa"></i></a></li>
+							<li><a href="#"><i class="fa fa-credit-card"></i></a></li>
+							<li><a href="#"><i class="fa fa-cc-paypal"></i></a></li>
+							<li><a href="#"><i class="fa fa-cc-mastercard"></i></a></li>
+							<li><a href="#"><i class="fa fa-cc-discover"></i></a></li>
+							<li><a href="#"><i class="fa fa-cc-amex"></i></a></li>
+						</ul>
+						<span class="copyright">
+							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+							Copyright &copy;<script>
+								document.write(new Date().getFullYear());
+							</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+						</span>
+					</div>
+				</div>
+				<!-- /row -->
+			</div>
+			<!-- /container -->
+		</div>
+		<!-- /bottom footer -->
+	</footer>
+	<!-- /FOOTER -->
+
+	<!-- jQuery Plugins -->
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/slick.min.js"></script>
+	<script src="js/nouislider.min.js"></script>
+	<script src="js/jquery.zoom.min.js"></script>
+	<script src="js/main.js"></script>
 
 </body>
 
