@@ -239,60 +239,7 @@ include("Funzioni.php");
 				<div class="col-md-5">
 					<div class="product-details">
 						<?php
-						$sql = $conn->prepare("SELECT * FROM articoli WHERE ID = ?");
-						$sql->bind_param('i', $_GET["ID"]);
-						$sql->execute();
-						$result = $sql->get_result();
-						if ($result !== false && $result->num_rows > 0) {
-							if ($row = $result->fetch_object()) {
-								echo "<form action='AddProduct.php' method='GET'>";
-								echo "<input type='hidden' name='IDarticolo' value='$row->ID'>";
-								echo "<input type='hidden' name='Pagina' value='product.php?ID=$row->ID'>";
-								echo "<h2 class='product-name'>$row->Nome</h2>";
-								echo '<div>
-										<div class="product-rating">';
-								for ($i = 0; $i < 5; $i++)
-									if ($i < $row->stelle)	echo '<i class="fa fa-star"></i>';
-									else echo '<i class="fa fa-star-o"></i>';
-								echo '	</div>';
-								echo '<a class="review-link" href="AddCommento.php">10 Review(s) | Add your review</a>';
-								echo '</div>';
-								echo '<div>';
-								if ($row->sconto != 0) {
-									$Sconto = ($row->Prezzo / 100) * $row->sconto;
-									$prezzo = $row->Prezzo - $Sconto;
-									echo "<h4 class='product-price'>$prezzo €<del class='product-old-price'>$row->Prezzo €</del></h4>";
-								} else {
-									echo "<h4 class='product-price'> $row->Prezzo €</h4>";
-								}
-
-								if ($row->QuantitaDisp > 0) {
-									echo '<span class="product-available">In Stock</span>';
-									echo '</div>';
-									echo "<p>$row->DescShort</p>";
-									echo '<div class="add-to-cart"><div class="qty-label">Qty<div class="input-number">';
-									echo '<select class="input-select" name="quantita">';
-									$i = 0;
-									while ($i < $row->QuantitaDisp && $i < 20) {
-										echo "<option>$i</option>";
-										$i++;
-									}
-									echo "</Select>";
-									echo '</div></div><button class="add-to-cart-btn" type="submit"><i class="fa fa-shopping-cart"></i> add to cart</button></div>';
-								} else {
-									echo '<span class="product-available">Out of Stock</span>';
-									echo '</div>';
-								}
-								echo '<ul class="product-links">';
-								echo '<li>Category:</li>';
-								$categorie = $row->Categorie;
-								$arr = explode(",", $categorie);
-								for ($i = 0; $i < count($arr); $i++)
-									echo "<li><a href='store.php?categorie=$arr[$i]'>$arr[$i]</a></li>";
-								echo '</ul>';
-								echo "</form>";
-							}
-						}
+							StampProdotto($_GET["ID"]);
 						?>
 
 					</div>

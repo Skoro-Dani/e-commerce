@@ -1,8 +1,13 @@
 <?php
 $numElementi = 0;
+$StelleArticoli;
+//index.php
 function StampArticoli($filtro)
 {
     include("SetUp/connection.php");
+    GetStelleArticoli();
+    global $StelleArticoli;
+
     $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%','$filtro','%') ");
     $sql->execute();
     $result = $sql->get_result();
@@ -29,7 +34,7 @@ function StampArticoli($filtro)
                 }
                 echo '<div class="product-rating">';
                 for ($i = 0; $i < 5; $i++) {
-                    if ($i < $row->stelle) echo '<i class="fa fa-star"></i>';
+                    if ($i < $StelleArticoli["$row->ID"]) echo '<i class="fa fa-star"></i>';
                     else echo '<i class="fa fa-star-o"></i>';
                 }
                 echo '</div>';
@@ -51,6 +56,7 @@ function StampArticoli($filtro)
         }
     }
 }
+//index.php
 function StampArticoliWidget($filtro)
 {
     include("SetUp/connection.php");
@@ -81,23 +87,26 @@ function StampArticoliWidget($filtro)
         }
     }
 }
+//Store.php
 function StampArticoliStore($OrderBy, $SearchBar, $page, $Categoria)
 {
     //dichiarazioni
     include("SetUp/connection.php");
+    GetStelleArticoli();
     global $numElementi;
+    global $StelleArticoli;
     //SQL
     if ($SearchBar != "" && $Categoria != "") {
-        $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%') &&  Categorie like Concat('%',?,'%') " . $OrderBy);
+        $sql = $conn->prepare("SELECT ID,source,scondo,Prezzo,QuantitaDisp as STELLE FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%') &&  Categorie like Concat('%',?,'%') " . $OrderBy);
         $sql->bind_param("ss", $SearchBar, $Categoria);
     } else if ($SearchBar != "" && $Categoria == "") {
-        $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%')" . $OrderBy);
+        $sql = $conn->prepare("SELECT ID,source,scondo,Prezzo,QuantitaDisp as STELLE FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%')" . $OrderBy);
         $sql->bind_param("s", $SearchBar);
     } else if ($SearchBar == "" && $Categoria != "") {
-        $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%',?,'%') " . $OrderBy);
+        $sql = $conn->prepare("SELECT ID,source,scondo,Prezzo,QuantitaDisp as STELLE FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%',?,'%') " . $OrderBy);
         $sql->bind_param("s", $Categoria);
     } else {
-        $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID " . $OrderBy);
+        $sql = $conn->prepare("SELECT articoli.ID as ID,source,sconto,Prezzo,QuantitaDisp as STELLE FROM articoli join imgsrc on articoli.ID = imgsrc.ID " . $OrderBy);
     }
 
     $sql->execute();
@@ -134,7 +143,7 @@ function StampArticoliStore($OrderBy, $SearchBar, $page, $Categoria)
                 }
                 echo '<div class="product-rating">';
                 for ($i = 0; $i < 5; $i++) {
-                    if ($i < $row->stelle) echo '<i class="fa fa-star"></i>';
+                    if ($i < $StelleArticoli["$row->ID"]) echo '<i class="fa fa-star"></i>';
                     else echo '<i class="fa fa-star-o"></i>';
                 }
                 echo '</div>';
@@ -157,6 +166,7 @@ function StampArticoliStore($OrderBy, $SearchBar, $page, $Categoria)
         }
     }
 }
+//store.php
 function StampPaginazionePage()
 {
     include("SetUp/connection.php");
@@ -186,9 +196,12 @@ function StampPaginazionePage()
     echo "page=$NPag";
     echo "'>$NPag</a></li>";
 }
+//carello.php
 function VisualizzaCarrello()
 {
     include("SetUp/connection.php");
+    GetStelleArticoli();
+    global $StelleArticoli;
     $sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID join imgsrc on articoli.ID = imgsrc.IDarticolo  where IdCarrello = " . $_SESSION['IDcarrello'] . " Group By articoli.ID ");
     $sql->execute();
     $result = $sql->get_result();
@@ -215,7 +228,7 @@ function VisualizzaCarrello()
                 }
                 echo '<div class="product-rating">';
                 for ($i = 0; $i < 5; $i++) {
-                    if ($i < $row->stelle) echo '<i class="fa fa-star"></i>';
+                    if ($i < $StelleArticoli["$row->ID"]) echo '<i class="fa fa-star"></i>';
                     else echo '<i class="fa fa-star-o"></i>';
                 }
                 echo '</div>';
@@ -234,6 +247,7 @@ function VisualizzaCarrello()
         }
     }
 }
+//carello numero elemnti
 function VisualizzaCarrelloNum()
 {
     include("SetUp/connection.php");
@@ -251,6 +265,7 @@ function VisualizzaCarrelloNum()
         }
     }
 }
+//carrello tendina
 function VisualizzaCarrelloTendina()
 {
     include("SetUp/connection.php");
@@ -273,6 +288,7 @@ function VisualizzaCarrelloTendina()
         }
     }
 }
+//carrello prezzo
 function VisualizzaCarrelloRisultato()
 {
     include("SetUp/connection.php");
@@ -292,6 +308,7 @@ function VisualizzaCarrelloRisultato()
     echo "<h5>SUBTOTAL: $total €</h5>";
     echo "</div>";
 }
+//stamp nome elemento product.php
 function StampBreadCumb()
 {
     include("SetUp/connection.php");
@@ -305,6 +322,7 @@ function StampBreadCumb()
         }
     }
 }
+//product.php
 function stampIMG()
 {
     include("SetUp/connection.php");
@@ -322,9 +340,12 @@ function stampIMG()
         }
     }
 }
+//product.php //prodotti correllati
 function StampProduct()
 {
     include("SetUp/connection.php");
+    GetStelleArticoli();
+    global $StelleArticoli;
     $sql = $conn->prepare("SELECT * FROM articoli WHERE ID = ?");
     $sql->bind_param('i', $_GET["ID"]);
     $sql->execute();
@@ -363,7 +384,7 @@ function StampProduct()
                     }
                     echo '<div class="product-rating">';
                     for ($i = 0; $i < 5; $i++) {
-                        if ($i < $row->stelle) echo '<i class="fa fa-star"></i>';
+                        if ($i < $StelleArticoli[$row->ID]) echo '<i class="fa fa-star"></i>';
                         else echo '<i class="fa fa-star-o"></i>';
                     }
                     echo '</div>';
@@ -383,6 +404,101 @@ function StampProduct()
                     echo '</div>';
                 }
             }
+        }
+    }
+}
+//funzione che carica in un vettore tutte le stelle per ogni singolo elemento
+function GetStelleArticoli()
+{
+    include("SetUp/connection.php");
+    global $StelleArticoli;
+    $count;
+    $sql = $conn->prepare("SELECT articoli.ID as ID , stelleCommento as STELLE FROM articoli left join commento on articoli.ID = commento.IdArticolo");
+    $sql->execute();
+    $result = $sql->get_result();
+
+    if ($result !== false && $result->num_rows > 0) {
+        for ($j = 0; $j < $result->num_rows; $j++) {
+            if ($row = $result->fetch_object()) {
+                $valueStelle = 0;
+                //controllo che le stelle non siano null
+                if (!is_null($row->STELLE)) $valueStelle = $row->STELLE;
+                //controllo che count non sia null e che esista
+                if (!isset($count["$row->ID"])) $count["$row->ID"] = 0;
+                //assegno i valori
+                if (isset($StelleArticoli["$row->ID"])) {
+                    $StelleArticoli["$row->ID"] +=  $valueStelle;
+                    $count["$row->ID"] = $count["$row->ID"] + 1;
+                } else {
+                    $count["$row->ID"] = 1;
+                    $StelleArticoli["$row->ID"] = $valueStelle;
+                }
+            }
+        }
+    }
+
+    foreach ($StelleArticoli as $key => $value) {
+        $StelleArticoli["$key"] = $value / $count["$key"];
+    }
+}
+//pagina product.php
+function StampProdotto($IDArticolo)
+{
+    include("SetUp/connection.php");
+    GetStelleArticoli();
+    global $StelleArticoli;
+    $sql = $conn->prepare("SELECT * FROM articoli WHERE ID = ?");
+    $sql->bind_param('i', $_GET["ID"]);
+    $sql->execute();
+    $result = $sql->get_result();
+    if ($result !== false && $result->num_rows > 0) {
+        if ($row = $result->fetch_object()) {
+            echo "<form action='AddProduct.php' method='GET'>";
+            echo "<input type='hidden' name='IDarticolo' value='$row->ID'>";
+            echo "<input type='hidden' name='Pagina' value='product.php?ID=$row->ID'>";
+            echo "<h2 class='product-name'>$row->Nome</h2>";
+            echo '<div>
+										<div class="product-rating">';
+            for ($i = 0; $i < 5; $i++)
+                if ($i < $StelleArticoli[$row->ID])    echo '<i class="fa fa-star"></i>';
+                else echo '<i class="fa fa-star-o"></i>';
+            echo '	</div>';
+            echo '<a class="review-link" href="AddCommento.php">10 Review(s) | Add your review</a>';
+            echo '</div>';
+            echo '<div>';
+            if ($row->sconto != 0) {
+                $Sconto = ($row->Prezzo / 100) * $row->sconto;
+                $prezzo = $row->Prezzo - $Sconto;
+                echo "<h4 class='product-price'>$prezzo €<del class='product-old-price'>$row->Prezzo €</del></h4>";
+            } else {
+                echo "<h4 class='product-price'> $row->Prezzo €</h4>";
+            }
+
+            if ($row->QuantitaDisp > 0) {
+                echo '<span class="product-available">In Stock</span>';
+                echo '</div>';
+                echo "<p>$row->DescShort</p>";
+                echo '<div class="add-to-cart"><div class="qty-label">Qty<div class="input-number">';
+                echo '<select class="input-select" name="quantita">';
+                $i = 0;
+                while ($i < $row->QuantitaDisp && $i < 20) {
+                    echo "<option>$i</option>";
+                    $i++;
+                }
+                echo "</Select>";
+                echo '</div></div><button class="add-to-cart-btn" type="submit"><i class="fa fa-shopping-cart"></i> add to cart</button></div>';
+            } else {
+                echo '<span class="product-available">Out of Stock</span>';
+                echo '</div>';
+            }
+            echo '<ul class="product-links">';
+            echo '<li>Category:</li>';
+            $categorie = $row->Categorie;
+            $arr = explode(",", $categorie);
+            for ($i = 0; $i < count($arr); $i++)
+                echo "<li><a href='store.php?categorie=$arr[$i]'>$arr[$i]</a></li>";
+            echo '</ul>';
+            echo "</form>";
         }
     }
 }
