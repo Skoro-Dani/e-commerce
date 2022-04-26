@@ -42,7 +42,7 @@ include("Funzioni.php");
 
 </head>
 
-<body>
+<body onload="CheckCampi()">
     <!-- HEADER -->
     <header>
         <!-- MAIN HEADER -->
@@ -99,60 +99,17 @@ include("Funzioni.php");
                                     <i class="fa fa-shopping-cart"></i>
                                     <span>My Cart</span>
                                     <?php
-                                    $sql = $conn->prepare("SELECT COUNT(*) as c FROM contiene WHERE IdCarrello = " . $_SESSION['IDcarrello']);
-                                    $sql->execute();
-                                    $result = $sql->get_result();
-                                    if ($result !== false && $result->num_rows > 0) {
-                                        if ($row = $result->fetch_object()) {
-                                            if ($row->c > 0) {
-                                                echo "<div class='qty'>";
-                                                //echo $_SESSION["IDcarelloo"];
-                                                echo $row->c;
-                                                echo "</div>";
-                                            }
-                                        }
-                                    }
+                                    VisualizzaCarrelloNum();
                                     ?>
                                 </a>
                                 <div class="cart-dropdown">
                                     <div class="cart-list">
                                         <?php
-                                        $sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID join imgsrc on articoli.ID = imgsrc.ID  where IdCarrello = " . $_SESSION['IDcarrello']);
-                                        $sql->execute();
-                                        $result = $sql->get_result();
-                                        if ($result !== false && $result->num_rows > 0) {
-                                            for ($j = 0; $j < $result->num_rows; $j++) {
-                                                if ($row = $result->fetch_object()) {
-                                                    echo '<div class="product-widget">';
-                                                    echo '	<div class="product-img">';
-                                                    echo "		<img src='./img/$row->source' alt=''>";
-                                                    echo '	</div>';
-                                                    echo '	<div class="product-body">';
-                                                    echo "		<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
-                                                    echo "		<h4 class='product-price'><span class='qty'>$row->quantita x</span>$row->Prezzo €</h4>";
-                                                    echo '	</div>';
-                                                    echo '</div>';
-                                                }
-                                            }
-                                        }
+                                        VisualizzaCarrelloTendina();
                                         ?>
                                     </div>
                                     <?php
-                                    $sql = $conn->prepare("SELECT * FROM contiene  join  articoli on contiene.IdArticolo = articoli.ID WHERE IdCarrello = " . $_SESSION['IDcarrello']);
-                                    $sql->execute();
-                                    $result = $sql->get_result();
-                                    $total = 0;
-                                    echo '<div class="cart-summary">';
-                                    if ($result !== false && $result->num_rows > 0) {
-                                        for ($j = 0; $j < $result->num_rows; $j++) {
-                                            if ($row = $result->fetch_object()) {
-                                                $total += ($row->quantita * $row->Prezzo);
-                                            }
-                                        }
-                                        echo "	<small>$result->num_rows Item(s) selected</small>";
-                                    }
-                                    echo "<h5>SUBTOTAL: $total €</h5>";
-                                    echo "</div>"
+                                    VisualizzaCarrelloRisultato();
                                     ?>
                                     <div class="cart-btns">
                                         <a href="Carello.php">View Cart</a>
@@ -190,13 +147,35 @@ include("Funzioni.php");
             <div id="responsive-nav">
                 <!-- NAV -->
                 <ul class="main-nav nav navbar-nav">
-                    <li class="active"><a href="index.php">Home</a></li>
-                    <li><a href='store.php?categoria=New'>New</a></li>
-                    <li><a href='store.php?categoria=Hot Deals'>Hot Deals</a></li>
-                    <li><a href='store.php?categoria=Electronics'>Electronics</a></li>
-                    <li><a href='store.php?categoria=House'>House</a></li>
-                    <li><a href='store.php?categoria=Motors'>Motors</a></li>
-                    <li><a href='store.php?categoria=Top Selling'>Top Selling</a></li>
+                    <li><a href="index.php">Home</a></li>
+                    <?php
+                    if (isset($_GET["categoria"])) {
+                        $categoria = $_GET["categoria"];
+                        if ($categoria == "New") echo "<li class='active'>";
+                        else echo "<li>";
+                        echo "<a href='store.php?categoria=New'>New</a></li>";
+
+                        if ($categoria == "Hot Deals") echo "<li class='active'>";
+                        else echo "<li>";
+                        echo "<a href='store.php?categoria=Hot Deals'>Hot Deals</a></li>";
+
+                        if ($categoria == "Electronics") echo "<li class='active'>";
+                        else echo "<li>";
+                        echo "<a href='store.php?categoria=Electronics'>Electronics</a></li>";
+
+                        if ($categoria == "House") echo "<li class='active'>";
+                        else echo "<li>";
+                        echo "<a href='store.php?categoria=House'>House</a></li>";
+
+                        if ($categoria == "Motors") echo "<li class='active'>";
+                        else echo "<li>";
+                        echo "<a href='store.php?categoria=Motors'>Motors</a></li>";
+
+                        if ($categoria == "Top Selling") echo "<li class='active'>";
+                        else echo "<li>";
+                        echo "<a href='store.php?categoria=Top Selling'>Top Selling</a></li>";
+                    }
+                    ?>
                 </ul>
                 <!-- /NAV -->
             </div>
@@ -206,50 +185,50 @@ include("Funzioni.php");
     </nav>
     <!-- /NAVIGATION -->
 
-
     <!-- SECTION -->
     <div class="section">
         <!-- container -->
         <div class="container">
             <!-- row -->
             <div class="row">
-                <?php
-                $sql = $conn->prepare("SELECT * FROM utente join indirizzo on utente.ID = indirizzo.IdUtente WHERE utente.ID = ? ");
-                $sql->bind_param('i', $_SESSION["IDutente"]);
-                $sql->execute();
-                $result = $sql->get_result();
+                <div class="col-md-7">
+                    <!-- Billing Details -->
 
-                if ($result !== false && $result->num_rows > 0) {
-                    for ($i = 0; $i < $result->num_rows; $i++) {
-                        if ($row = $result->fetch_object()) {
-                            if ($i == 0) {
-                                echo '<div class="product-img">';
-                                echo "<img src='./imgUtenti/$row->imgsrc' alt='immagine profilo' height='50' witdh='50'>";
-                                echo '</div>';
-                                echo '<div class="product-label">';
-                                echo "<span class='new'>Username: $row->username</span>";
-                                echo '</div>';
-                                echo '<div class="product-label">';
-                                echo "<span class='new'>Nome: $row->nome</span>";
-                                echo '</div>';
-                                echo '<div class="product-label">';
-                                echo "<span class='new'>Cognome: $row->cognome</span>";
-                                echo '</div>';
-                            }
-                            echo '<div class="product-label">';
-                            echo "<span class='new'>Indirizzo: $row->stato - $row->regione - $row->provincia - $row->citta - $row->via - $row->civico - $row->cap </span>";
-                            echo "<button type='submit' class='btn btn-link'><a href='DelIndirizzo.php?ID=$row->ID' class='primary-btn order-submit'>-</a></button>";
-                            echo '</div>';
-                        }
-                    }
-                }
-                ?>
-                <button type="submit" class="btn btn-link"><a href="Logout.php" class="primary-btn order-submit">Logout</a></button>
-                <button type="submit" class="btn btn-link"><a href="AddIndirizzo.php" class="primary-btn order-submit">Aggiungi Indirizzo</a></button>
+                    <div class="billing-details">
+                        <Form enctype="multipart/form-data" action="chkRegistrazione.php" method="post">
+                        <?php
+						if (isset($_GET["msg"]) && $_GET["msg"] != "") echo "<div class='alert alert-danger' role='alert'>" . $_GET['msg'] . "  </div>";
+						?>
+                            <div class="section-title">
+                                <h3 class="title">Registrazione</h3>
+                            </div>
+                            <div class="form-group">
+                                <input id="username" class="input" type="text" name="username" placeholder="Username"onchange="CheckCampi()">
+                            </div>
+                            <div class="form-group">
+                                <input id="p1" class="input" type="password" name="password" placeholder="Enter Your Password" onchange="CheckCampi()">
+                            </div>
+                            <div class="form-group">
+                                <input id="p2" class="input" type="password" name="password" placeholder="Conferm Your Password" onchange="CheckCampi()">
+                            </div>
+                            <div class="form-group">
+                                <input id="Nome" class="input" type="text" name="Nome" placeholder="Nome"onchange="CheckCampi()">
+                            </div>
+                            <div class="form-group">
+                                <input id="Cognome" class="input" type="text" name="Cognome" placeholder="Cognome"onchange="CheckCampi()">
+                            </div>
+                            <div class="form-group">
+                                <a class="primary-btn order-submit"><input class="btn btn" type="file" name="imgsrc" placeholder="Carica Immagine"></a>
+                            </div>
+                            <button id="button" type="submit" class="btn btn-link"><a class="primary-btn order-submit">Registrati</a></button>
+                        </Form>
+                    </div>
+
+                </div>
+                <!-- /row -->
             </div>
-            <!-- /row -->
+            <!-- /container -->
         </div>
-        <!-- /container -->
     </div>
     <!-- /SECTION -->
 
@@ -345,6 +324,22 @@ include("Funzioni.php");
     <script src="js/nouislider.min.js"></script>
     <script src="js/jquery.zoom.min.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        function CheckCampi() {
+            document.getElementById("button").disabled = true;
+            var ris = false;
+            //controllo che abbia messo tutti i campi obbligatori
+            if (document.getElementById("p1").value == "") ris = true;
+            else if (document.getElementById("Nome").value == "") ris = true;
+            else if (document.getElementById("Cognome").value == "") ris = true;
+            else if (document.getElementById("p2").value == "") ris = true;
+            //controllo che le password siano uguali
+            else if (document.getElementById("p1").value != document.getElementById("p2").value) ris = true;
+
+            if (ris == true) document.getElementById("button").disabled = true;
+            else document.getElementById("button").disabled = false;
+        }
+    </script>
 
 </body>
 

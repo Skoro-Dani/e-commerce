@@ -31,3 +31,4 @@ if ($funziona == true) {
     }
   }
 } else header("location:Login.php?msg=Credenziali sbagliate");
+echo "errore";
