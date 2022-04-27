@@ -97,16 +97,16 @@ function StampArticoliStore($OrderBy, $SearchBar, $page, $Categoria)
     global $StelleArticoli;
     //SQL
     if ($SearchBar != "" && $Categoria != "") {
-        $sql = $conn->prepare("SELECT ID,source,scondo,Prezzo,QuantitaDisp as STELLE FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%') &&  Categorie like Concat('%',?,'%') " . $OrderBy);
+        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,scondo,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%') &&  Categorie like Concat('%',?,'%') " . $OrderBy);
         $sql->bind_param("ss", $SearchBar, $Categoria);
     } else if ($SearchBar != "" && $Categoria == "") {
-        $sql = $conn->prepare("SELECT ID,source,scondo,Prezzo,QuantitaDisp as STELLE FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%')" . $OrderBy);
+        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,scondo,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%')" . $OrderBy);
         $sql->bind_param("s", $SearchBar);
     } else if ($SearchBar == "" && $Categoria != "") {
-        $sql = $conn->prepare("SELECT ID,source,scondo,Prezzo,QuantitaDisp as STELLE FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%',?,'%') " . $OrderBy);
+        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,scondo,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%',?,'%') " . $OrderBy);
         $sql->bind_param("s", $Categoria);
     } else {
-        $sql = $conn->prepare("SELECT articoli.ID as ID,source,sconto,Prezzo,QuantitaDisp as STELLE FROM articoli join imgsrc on articoli.ID = imgsrc.ID " . $OrderBy);
+        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,sconto,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID " . $OrderBy);
     }
 
     $sql->execute();
@@ -380,7 +380,7 @@ function StampProduct()
                         $prezzo = $row->Prezzo - $Sconto;
                         echo "<h4 class='product-price'>$prezzo €<del class='product-old-price'>$row->Prezzo €</del></h4>";
                     } else {
-                        echo "<h4 class='product-price'>$prezzo €</h4>";
+                        echo "<h4 class='product-price'>$row->Prezzo €</h4>";
                     }
                     echo '<div class="product-rating">';
                     for ($i = 0; $i < 5; $i++) {
@@ -501,4 +501,49 @@ function StampProdotto($IDArticolo)
             echo "</form>";
         }
     }
+}
+//controlla se un prodotto è stato acquistato da un utente
+function IsVerificato($IDarticolo, $IDutente)
+{
+    include("SetUp/connection.php");
+    $verifica = 0;
+
+    $sql = $conn->prepare("SELECT count(*) as c FROM ordine join carrello on carrello.ID =  ordine.IdCarrello join contiene on carrello.ID = contiene.IdCarrello WHERE contiene.IDarticolo = ? ");
+    $sql->bind_param("i", $_POST["IDarticolo"]);
+
+    $sql->execute();
+    $result = $sql->get_result();
+    if ($result !== false && $result->num_rows > 0) {
+        $verifica = 1;
+    }
+    return $verifica;
+}
+//header admin per il prodotto
+function HeaderadminProduct($IDprodotto)
+{
+    if (isset($_SESSION["IsAdmin"]) && $_SESSION["IsAdmin"] == 1) {
+        echo '<div id="top-header">';
+        echo '<div class="container">';
+            echo '<ul class="header-links pull-right">';
+                echo "<li><a href='DelProduct.php?ID=$IDprodotto'><i class='fa fa-user-o'></i>Elimina Prodotto</a></li>";
+                echo "<li><a href='ModificaQuantita.php?ID=$IDprodotto'><i class='fa fa-user-o'></i>Modifica Quantita</a></li>";
+                echo "<li><a href='AggiungiProdotto.php'><i class='fa fa-user-o'></i>Aggiungi Prodotto</a></li>";
+            echo '</ul></div> </div>';
+    }
+}
+//header admin per le altre pagine
+function HeaderAdmin()
+{
+    if (isset($_SESSION["IsAdmin"]) && $_SESSION["IsAdmin"] == 1) {
+        echo '<div id="top-header">';
+        echo '<div class="container">';
+            echo '<ul class="header-links pull-right">';
+                echo "<li><a href='AggiungiProdotto.php'><i class='fa fa-user-o'></i>Aggiungi Prodotto</a></li>";
+            echo '</ul></div> </div>';
+    }
+}
+function isAdmin()
+{
+    if (isset($_SESSION["IsAdmin"]) && $_SESSION["IsAdmin"] == 1) return 1;
+    else return 0;
 }

@@ -2,6 +2,7 @@
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 include("Funzioni.php");
+if (isAdmin() == 0) header("location:index.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,12 +43,12 @@ include("Funzioni.php");
 
 </head>
 
-<body onload="CheckCampi()">
+<body>
     <!-- HEADER -->
     <header>
-    <?php 
-		HeaderAdmin();
-		?>
+        <?php
+        HeaderAdmin();
+        ?>
         <!-- MAIN HEADER -->
         <div id="header">
             <!-- container -->
@@ -150,35 +151,7 @@ include("Funzioni.php");
             <div id="responsive-nav">
                 <!-- NAV -->
                 <ul class="main-nav nav navbar-nav">
-                    <li><a href="index.php">Home</a></li>
-                    <?php
-                    if (isset($_GET["categoria"])) {
-                        $categoria = $_GET["categoria"];
-                        if ($categoria == "New") echo "<li class='active'>";
-                        else echo "<li>";
-                        echo "<a href='store.php?categoria=New'>New</a></li>";
-
-                        if ($categoria == "Hot Deals") echo "<li class='active'>";
-                        else echo "<li>";
-                        echo "<a href='store.php?categoria=Hot Deals'>Hot Deals</a></li>";
-
-                        if ($categoria == "Electronics") echo "<li class='active'>";
-                        else echo "<li>";
-                        echo "<a href='store.php?categoria=Electronics'>Electronics</a></li>";
-
-                        if ($categoria == "House") echo "<li class='active'>";
-                        else echo "<li>";
-                        echo "<a href='store.php?categoria=House'>House</a></li>";
-
-                        if ($categoria == "Motors") echo "<li class='active'>";
-                        else echo "<li>";
-                        echo "<a href='store.php?categoria=Motors'>Motors</a></li>";
-
-                        if ($categoria == "Top Selling") echo "<li class='active'>";
-                        else echo "<li>";
-                        echo "<a href='store.php?categoria=Top Selling'>Top Selling</a></li>";
-                    }
-                    ?>
+                    <li><a href="index.php">Elimina il Dispositivo</a></li>
                 </ul>
                 <!-- /NAV -->
             </div>
@@ -188,52 +161,29 @@ include("Funzioni.php");
     </nav>
     <!-- /NAVIGATION -->
 
+
     <!-- SECTION -->
     <div class="section">
         <!-- container -->
         <div class="container">
             <!-- row -->
             <div class="row">
-                <div class="col-md-7">
-                    <!-- Billing Details -->
-
-                    <div class="billing-details">
-                        <Form enctype="multipart/form-data" action="chkRegistrazione.php" method="post">
-                        <?php
-						if (isset($_GET["msg"]) && $_GET["msg"] != "") echo "<div class='alert alert-danger' role='alert'>" . $_GET['msg'] . "  </div>";
-						?>
-                            <div class="section-title">
-                                <h3 class="title">Registrazione</h3>
-                            </div>
-                            <div class="form-group">
-                                <input id="username" class="input" type="text" name="username" placeholder="Username"onchange="CheckCampi()">
-                            </div>
-                            <div class="form-group">
-                                <input id="p1" class="input" type="password" name="password" placeholder="Enter Your Password" onchange="CheckCampi()">
-                            </div>
-                            <div class="form-group">
-                                <input id="p2" class="input" type="password" name="password" placeholder="Conferm Your Password" onchange="CheckCampi()">
-                            </div>
-                            <div class="form-group">
-                                <input id="Nome" class="input" type="text" name="Nome" placeholder="Nome"onchange="CheckCampi()">
-                            </div>
-                            <div class="form-group">
-                                <input id="Cognome" class="input" type="text" name="Cognome" placeholder="Cognome"onchange="CheckCampi()">
-                            </div>
-                            <div class="form-group">
-                                <a class="primary-btn order-submit"><input class="btn btn" type="file" name="imgsrc" placeholder="Carica Immagine"></a>
-                            </div>
-                            <button id="button" type="submit" class="btn btn-link"><a class="primary-btn order-submit">Registrati</a></button>
-                        </Form>
+                <form action="Elimina.php" method="POST">
+                    <input type="text" name="ID" hidden value="<?php echo $_GET["ID"];?>">
+                    <div class="alert alert-warning" role="alert">
+                       Sicuro di voler eliminare l'articolo?
                     </div>
-
-                </div>
-                <!-- /row -->
+                    <button class="btn btn-link" type="submit"><a class="primary-btn order-submit">Elimina Prodotto</a></button>
+                    <button class="btn btn-link"><a href="index.php" class="primary-btn order-submit">Torna alla home</a></button>
+                </form>
+                
             </div>
-            <!-- /container -->
+            <!-- /row -->
         </div>
+        <!-- /container -->
     </div>
     <!-- /SECTION -->
+
 
     <!-- FOOTER -->
     <footer id="footer">
@@ -327,22 +277,6 @@ include("Funzioni.php");
     <script src="js/nouislider.min.js"></script>
     <script src="js/jquery.zoom.min.js"></script>
     <script src="js/main.js"></script>
-    <script>
-        function CheckCampi() {
-            document.getElementById("button").disabled = true;
-            var ris = false;
-            //controllo che abbia messo tutti i campi obbligatori
-            if (document.getElementById("p1").value == "") ris = true;
-            else if (document.getElementById("Nome").value == "") ris = true;
-            else if (document.getElementById("Cognome").value == "") ris = true;
-            else if (document.getElementById("p2").value == "") ris = true;
-            //controllo che le password siano uguali
-            else if (document.getElementById("p1").value != document.getElementById("p2").value) ris = true;
-
-            if (ris == true) document.getElementById("button").disabled = true;
-            else document.getElementById("button").disabled = false;
-        }
-    </script>
 
 </body>
 

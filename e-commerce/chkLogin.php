@@ -14,6 +14,8 @@ $funziona = false;
 if ($result->num_rows > 0) {
   // output data of each row
   if ($row = $result->fetch_object()) {
+    if($row->admin==1) $_SESSION["IsAdmin"]=1;
+    else $_SESSION["IsAdmin"]=0;
     $_SESSION["IDutente"] = $row->ID;
     $funziona = true;
   }
