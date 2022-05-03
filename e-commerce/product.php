@@ -7,35 +7,35 @@ include("Funzioni.php");
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-    <title>Skamazon</title>
+	<title>Skamazon</title>
 
-    <!-- Google font -->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
+	<!-- Google font -->
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700" rel="stylesheet">
 
-    <!-- Bootstrap -->
-    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
+	<!-- Bootstrap -->
+	<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
 
-    <!-- Slick -->
-    <link type="text/css" rel="stylesheet" href="css/slick.css" />
-    <link type="text/css" rel="stylesheet" href="css/slick-theme.css" />
+	<!-- Slick -->
+	<link type="text/css" rel="stylesheet" href="css/slick.css" />
+	<link type="text/css" rel="stylesheet" href="css/slick-theme.css" />
 
-    <!-- nouislider -->
-    <link type="text/css" rel="stylesheet" href="css/nouislider.min.css" />
+	<!-- nouislider -->
+	<link type="text/css" rel="stylesheet" href="css/nouislider.min.css" />
 
-    <!-- Font Awesome Icon -->
-    <link rel="stylesheet" href="css/font-awesome.min.css">
+	<!-- Font Awesome Icon -->
+	<link rel="stylesheet" href="css/font-awesome.min.css">
 
-    <!-- Custom stlylesheet -->
-    <link type="text/css" rel="stylesheet" href="css/style.css" />
+	<!-- Custom stlylesheet -->
+	<link type="text/css" rel="stylesheet" href="css/style.css" />
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
+	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
  		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
  		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
  		<![endif]-->
@@ -576,6 +576,40 @@ include("Funzioni.php");
 	<script src="js/nouislider.min.js"></script>
 	<script src="js/jquery.zoom.min.js"></script>
 	<script src="js/main.js"></script>
+	<script>
+		function ModificaQuantitia() {
+			let InseririsciQuantitia = prompt("Sicuro di voler Eliminare il Prodotto");
+			let text;
+			if (InseririsciQuantitia == null || InseririsciQuantitia == "") {
+				text = "";
+			} else {
+				$.ajax({
+					// definisco il tipo della chiamata
+					type: "GET",
+					// specifico la URL della risorsa da contattare
+					url: "ADDQuantita.php",
+					// passo dei dati alla risorsa remota
+					data: "Quantita=" + InseririsciQuantitia,
+					// definisco il formato della risposta
+					dataType: "html",
+					// imposto un'azione per il caso di successo
+					success: function(risposta) {
+						$("div#risposta").html(risposta);
+					},
+					// ed una per il caso di fallimento
+					error: function() {
+						alert("Chiamata fallita!!!");
+					}
+				});
+			}
+		}
+
+		function DElProdotto() {
+			if (confirm("Vuoi Eliminare questo prodotto?")) {
+				$.get("Elimina.php",{ID: <?php echo $_GET["ID"];?>},(data,stato)=>{},true);
+			}
+		}
+	</script>
 
 </body>
 

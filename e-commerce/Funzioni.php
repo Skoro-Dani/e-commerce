@@ -97,13 +97,13 @@ function StampArticoliStore($OrderBy, $SearchBar, $page, $Categoria)
     global $StelleArticoli;
     //SQL
     if ($SearchBar != "" && $Categoria != "") {
-        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,scondo,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%') &&  Categorie like Concat('%',?,'%') " . $OrderBy);
+        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,sconto,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%') &&  Categorie like Concat('%',?,'%') " . $OrderBy);
         $sql->bind_param("ss", $SearchBar, $Categoria);
     } else if ($SearchBar != "" && $Categoria == "") {
-        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,scondo,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%')" . $OrderBy);
+        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,sconto,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%')" . $OrderBy);
         $sql->bind_param("s", $SearchBar);
     } else if ($SearchBar == "" && $Categoria != "") {
-        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,scondo,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%',?,'%') " . $OrderBy);
+        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,sconto,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%',?,'%') " . $OrderBy);
         $sql->bind_param("s", $Categoria);
     } else {
         $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,sconto,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID " . $OrderBy);
@@ -524,11 +524,11 @@ function HeaderadminProduct($IDprodotto)
     if (isset($_SESSION["IsAdmin"]) && $_SESSION["IsAdmin"] == 1) {
         echo '<div id="top-header">';
         echo '<div class="container">';
-            echo '<ul class="header-links pull-right">';
-                echo "<li><a href='DelProduct.php?ID=$IDprodotto'><i class='fa fa-user-o'></i>Elimina Prodotto</a></li>";
-                echo "<li><a href='ModificaQuantita.php?ID=$IDprodotto'><i class='fa fa-user-o'></i>Modifica Quantita</a></li>";
-                echo "<li><a href='AggiungiProdotto.php'><i class='fa fa-user-o'></i>Aggiungi Prodotto</a></li>";
-            echo '</ul></div> </div>';
+        echo '<ul class="header-links pull-right">';
+        echo "<li><a onclick='DElProdotto()'><i class='fa fa-user-o'></i>Elimina Prodotto</a></li>";
+        echo "<li><a onclick='ModificaQuantitia()'><i class='fa fa-user-o'></i>Modifica Quantita</a></li>";
+        echo "<li><a href='AggiungiProdotto.php'><i class='fa fa-user-o'></i>Aggiungi Prodotto</a></li>";
+        echo '</ul></div> </div>';
     }
 }
 //header admin per le altre pagine
@@ -537,9 +537,9 @@ function HeaderAdmin()
     if (isset($_SESSION["IsAdmin"]) && $_SESSION["IsAdmin"] == 1) {
         echo '<div id="top-header">';
         echo '<div class="container">';
-            echo '<ul class="header-links pull-right">';
-                echo "<li><a href='AggiungiProdotto.php'><i class='fa fa-user-o'></i>Aggiungi Prodotto</a></li>";
-            echo '</ul></div> </div>';
+        echo '<ul class="header-links pull-right">';
+        echo "<li><a ><i class='fa fa-user-o'></i>Aggiungi Prodotto</a></li>";
+        echo '</ul></div> </div>';
     }
 }
 function isAdmin()
