@@ -578,35 +578,30 @@ include("Funzioni.php");
 	<script src="js/main.js"></script>
 	<script>
 		function ModificaQuantitia() {
-			let InseririsciQuantitia = prompt("Sicuro di voler Eliminare il Prodotto");
-			let text;
-			if (InseririsciQuantitia == null || InseririsciQuantitia == "") {
-				text = "";
-			} else {
-				$.ajax({
-					// definisco il tipo della chiamata
-					type: "GET",
-					// specifico la URL della risorsa da contattare
-					url: "ADDQuantita.php",
-					// passo dei dati alla risorsa remota
-					data: "Quantita=" + InseririsciQuantitia,
-					// definisco il formato della risposta
-					dataType: "html",
-					// imposto un'azione per il caso di successo
-					success: function(risposta) {
-						$("div#risposta").html(risposta);
+			let ID = <?php echo $_GET["ID"]; ?>;
+			let InseririsciQuantitia = prompt("Quanto voui aggiungere");
+			let quantita=0;
+			if (InseririsciQuantitia != null || InseririsciQuantitia != "") {
+				quantita=InseririsciQuantitia;
+				$.get("http://localhost/PHP_skoro/e-commerce/ADDquantita.php", {
+						ID: ID,
+						quantita : quantita
 					},
-					// ed una per il caso di fallimento
-					error: function() {
-						alert("Chiamata fallita!!!");
-					}
-				});
+					function (data, status) {
+						location.reload();
+					})
 			}
 		}
 
 		function DElProdotto() {
+			let ID = <?php echo $_GET["ID"]; ?>;
 			if (confirm("Vuoi Eliminare questo prodotto?")) {
-				$.get("Elimina.php",{ID: <?php echo $_GET["ID"];?>},(data,stato)=>{},true);
+				$.get("http://localhost/PHP_skoro/e-commerce/Elimina.php", {
+						ID: ID
+					},
+					function (data, status) {
+                        alert("Articolo Eliminato");
+					})
 			}
 		}
 	</script>

@@ -8,7 +8,7 @@ function StampArticoli($filtro)
     GetStelleArticoli();
     global $StelleArticoli;
 
-    $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%','$filtro','%') ");
+    $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.IDarticolo WHERE Categorie like Concat('%','$filtro','%') group by IDarticolo");
     $sql->execute();
     $result = $sql->get_result();
 
@@ -19,12 +19,12 @@ function StampArticoli($filtro)
                 echo '<div class="product-img">';
                 echo "<img src='./img/$row->source' alt=''>";
                 echo '<div class="product-label">
-													  <span class="new">NEW</span>
+													  <span class="new">'.$filtro.'</span>
 												  	  </div>';
                 echo '</div>';
                 echo '<div class="product-body">';
                 echo '<p class="product-category">Category</p>';
-                echo "<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
+                echo "<h3 class='product-name'><a href='product.php?ID=$row->IDarticolo'>$row->Nome</a></h3>";
                 if ($row->sconto != 0) {
                     $Sconto = ($row->Prezzo / 100) * $row->sconto;
                     $prezzo = $row->Prezzo - $Sconto;
@@ -34,7 +34,7 @@ function StampArticoli($filtro)
                 }
                 echo '<div class="product-rating">';
                 for ($i = 0; $i < 5; $i++) {
-                    if ($i < $StelleArticoli["$row->ID"]) echo '<i class="fa fa-star"></i>';
+                    if ($i < $StelleArticoli[$row->IDarticolo]) echo '<i class="fa fa-star"></i>';
                     else echo '<i class="fa fa-star-o"></i>';
                 }
                 echo '</div>';
@@ -45,7 +45,7 @@ function StampArticoli($filtro)
                 echo '<div class="add-to-cart">';
 
                 if ($row->QuantitaDisp > 0) {
-                    echo "<a href='AddProduct.php?IDarticolo=$row->ID&quantita=1&Pagina=index.php'>";
+                    echo "<a href='AddProduct.php?IDarticolo=$row->IDarticolo&quantita=1&Pagina=index.php'>";
                     echo '<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>';
                     echo '</a>';
                 } else
@@ -60,7 +60,7 @@ function StampArticoli($filtro)
 function StampArticoliWidget($filtro)
 {
     include("SetUp/connection.php");
-    $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%','$filtro','%') ");
+    $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.IDarticolo WHERE Categorie like Concat('%','$filtro','%') group by IDarticolo");
     $sql->execute();
     $result = $sql->get_result();
 
@@ -73,7 +73,7 @@ function StampArticoliWidget($filtro)
                 echo '	</div>';
                 echo '	<div class="product-body">';
                 echo '		<p class="product-category">Category</p>';
-                echo "		<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
+                echo "		<h3 class='product-name'><a href='product.php?ID=$row->IDarticolo'>$row->Nome</a></h3>";
                 if ($row->sconto != 0) {
                     $Sconto = ($row->Prezzo / 100) * $row->sconto;
                     $prezzo = $row->Prezzo - $Sconto;
@@ -97,16 +97,16 @@ function StampArticoliStore($OrderBy, $SearchBar, $page, $Categoria)
     global $StelleArticoli;
     //SQL
     if ($SearchBar != "" && $Categoria != "") {
-        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,sconto,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%') &&  Categorie like Concat('%',?,'%') " . $OrderBy);
+        $sql = $conn->prepare("SELECT Nome,source,sconto,Prezzo,QuantitaDisp,IDarticolo FROM articoli join imgsrc on articoli.ID = imgsrc.IDarticolo WHERE Nome like Concat('%',?,'%') &&  Categorie like Concat('%',?,'%') group by IDarticolo" . $OrderBy);
         $sql->bind_param("ss", $SearchBar, $Categoria);
     } else if ($SearchBar != "" && $Categoria == "") {
-        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,sconto,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Nome like Concat('%',?,'%')" . $OrderBy);
+        $sql = $conn->prepare("SELECT Nome,source,sconto,Prezzo,QuantitaDisp,IDarticolo FROM articoli join imgsrc on articoli.ID = imgsrc.IDarticolo WHERE Nome like Concat('%',?,'%') group by IDarticolo" . $OrderBy);
         $sql->bind_param("s", $SearchBar);
     } else if ($SearchBar == "" && $Categoria != "") {
-        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,sconto,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%',?,'%') " . $OrderBy);
+        $sql = $conn->prepare("SELECT Nome source,sconto,Prezzo,QuantitaDisp,IDarticolo  FROM articoli join imgsrc on articoli.ID = imgsrc.IDarticolo WHERE Categorie like Concat('%',?,'%') group by IDarticolo" . $OrderBy);
         $sql->bind_param("s", $Categoria);
     } else {
-        $sql = $conn->prepare("SELECT Nome,articoli.ID as ID,source,sconto,Prezzo,QuantitaDisp FROM articoli join imgsrc on articoli.ID = imgsrc.ID " . $OrderBy);
+        $sql = $conn->prepare("SELECT Nome,source,sconto,Prezzo,QuantitaDisp,IDarticolo FROM articoli join imgsrc on articoli.ID = imgsrc.IDarticolo group by IDarticolo" . $OrderBy);
     }
 
     $sql->execute();
@@ -127,13 +127,10 @@ function StampArticoliStore($OrderBy, $SearchBar, $page, $Categoria)
                 echo '<div class="product">';
                 echo '<div class="product-img">';
                 echo "<img src='./img/$row->source' alt=''>";
-                echo '<div class="product-label">
-                                  <span class="new">NEW</span>
-                                    </div>';
                 echo '</div>';
                 echo '<div class="product-body">';
                 echo '<p class="product-category">Category</p>';
-                echo "<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
+                echo "<h3 class='product-name'><a href='product.php?ID=$row->IDarticolo'>$row->Nome</a></h3>";
                 if ($row->sconto != 0) {
                     $Sconto = ($row->Prezzo / 100) * $row->sconto;
                     $prezzo = $row->Prezzo - $Sconto;
@@ -154,7 +151,7 @@ function StampArticoliStore($OrderBy, $SearchBar, $page, $Categoria)
                 echo '<div class="add-to-cart">';
 
                 if ($row->QuantitaDisp > 0) {
-                    echo "<a href='AddProduct.php?IDarticolo=$row->ID&quantita=1&Pagina=index.php'>";
+                    echo "<a href='AddProduct.php?IDarticolo=$row->IDarticolo&quantita=1&Pagina=index.php'>";
                     echo '<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>';
                     echo '</a>';
                 } else
@@ -480,8 +477,8 @@ function StampProdotto($IDArticolo)
                 echo "<p>$row->DescShort</p>";
                 echo '<div class="add-to-cart"><div class="qty-label">Qty<div class="input-number">';
                 echo '<select class="input-select" name="quantita">';
-                $i = 0;
-                while ($i < $row->QuantitaDisp && $i < 20) {
+                $i = 1;
+                while ($i < $row->QuantitaDisp +1 && $i < 21) {
                     echo "<option>$i</option>";
                     $i++;
                 }
@@ -526,7 +523,7 @@ function HeaderadminProduct($IDprodotto)
         echo '<div class="container">';
         echo '<ul class="header-links pull-right">';
         echo "<li><a onclick='DElProdotto()'><i class='fa fa-user-o'></i>Elimina Prodotto</a></li>";
-        echo "<li><a onclick='ModificaQuantitia()'><i class='fa fa-user-o'></i>Modifica Quantita</a></li>";
+        echo "<li><a onclick='ModificaQuantitia()'><i class='fa fa-user-o'></i>Aggiungi Quantita</a></li>";
         echo "<li><a href='AggiungiProdotto.php'><i class='fa fa-user-o'></i>Aggiungi Prodotto</a></li>";
         echo '</ul></div> </div>';
     }
