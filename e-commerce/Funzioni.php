@@ -255,7 +255,6 @@ function VisualizzaCarrelloNum()
         if ($row = $result->fetch_object()) {
             if ($row->c > 0) {
                 echo "<div class='qty'>";
-                //echo $_SESSION["IDcarelloo"];
                 echo $row->c;
                 echo "</div>";
             }
@@ -357,7 +356,7 @@ function StampProduct()
     $arr = explode(",", $categorie);
     for ($i = 0; $i < count($arr); $i++) {
 
-        $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.ID WHERE Categorie like Concat('%','$arr[$i]','%') ");
+        $sql = $conn->prepare("SELECT * FROM articoli join imgsrc on articoli.ID = imgsrc.IDarticolo WHERE Categorie like Concat('%','$arr[$i]','%') ");
         $sql->execute();
         $result = $sql->get_result();
 
@@ -371,7 +370,7 @@ function StampProduct()
                     echo '</div>';
                     echo '<div class="product-body">';
                     echo '<p class="product-category">Category</p>';
-                    echo "<h3 class='product-name'><a href='product.php?ID=$row->ID'>$row->Nome</a></h3>";
+                    echo "<h3 class='product-name'><a href='product.php?ID=$row->IDarticolo'>$row->Nome</a></h3>";
                     if ($row->sconto != 0) {
                         $Sconto = ($row->Prezzo / 100) * $row->sconto;
                         $prezzo = $row->Prezzo - $Sconto;
@@ -381,7 +380,7 @@ function StampProduct()
                     }
                     echo '<div class="product-rating">';
                     for ($i = 0; $i < 5; $i++) {
-                        if ($i < $StelleArticoli[$row->ID]) echo '<i class="fa fa-star"></i>';
+                        if ($i < $StelleArticoli[$row->IDarticolo]) echo '<i class="fa fa-star"></i>';
                         else echo '<i class="fa fa-star-o"></i>';
                     }
                     echo '</div>';
@@ -392,7 +391,7 @@ function StampProduct()
                     echo '<div class="add-to-cart">';
 
                     if ($row->QuantitaDisp > 0) {
-                        echo "<a href='AddProduct.php?IDarticolo=$row->ID&quantita=1&Pagina=index.php'>";
+                        echo "<a href='AddProduct.php?IDarticolo=$row->IDarticolo&quantita=1&Pagina=index.php'>";
                         echo '<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button>';
                         echo '</a>';
                     } else
@@ -453,7 +452,7 @@ function StampProdotto($IDArticolo)
             echo "<form action='AddProduct.php' method='GET'>";
             echo "<input type='hidden' name='IDarticolo' value='$IDArticolo'>";
             echo "<input type='hidden' name='Pagina' value='product.php?ID=$IDArticolo'>";
-            echo "<h2 class='product-name'>Nome</h2>";
+            echo "<h2 class='product-name'>$row->Nome</h2>";
             echo '<div>
 										<div class="product-rating">';
             for ($i = 0; $i < 5; $i++)
@@ -544,4 +543,40 @@ function isAdmin()
     if (isset($_SESSION["IsAdmin"]) && $_SESSION["IsAdmin"] == 1) return 1;
     else return 0;
 }
+function StampProductCheckOut()
+{
+    include("SetUp/connection.php");
+    $sql = $conn->prepare("SELECT * FROM  contiene  join  articoli on contiene.IdArticolo = articoli.ID where IdCarrello = " . $_SESSION['IDcarrello']);
+    $sql->execute();
+    $result = $sql->get_result();
+    if ($result !== false && $result->num_rows > 0) {
+        echo '<div class="order-products">';
+        for ($j = 0; $j < 4; $j++) {
+            if ($row = $result->fetch_object()) {
+                echo '<div class="order-col">';
+                echo "<div>$row->quantita x $row->Nome</div>";
+                echo "<div>$row->Prezzo €</div>";
+                echo '</div>';
+            }
+        }
+        echo '</div>';
+    }
+}
 
+function CalcolaPrezzo()
+{
+    include("SetUp/connection.php");
+    $sql = $conn->prepare("SELECT * FROM contiene  join  articoli on contiene.IdArticolo = articoli.ID WHERE IdCarrello = " . $_SESSION['IDcarrello']);
+    $sql->execute();
+    $result = $sql->get_result();
+    $total = 0;
+    
+    if ($result !== false && $result->num_rows > 0) {
+        for ($j = 0; $j < $result->num_rows; $j++) {
+            if ($row = $result->fetch_object()) {
+                $total += ($row->quantita * $row->Prezzo);
+            }
+        }
+    }
+    return $total;
+}

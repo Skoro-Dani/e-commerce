@@ -201,7 +201,7 @@ include("Funzioni.php");
 						<li><a href="store.php">All Categories</a></li>
 						<li class="active">
 							<?php
-							StampBreadCumb();
+								StampBreadCumb();
 							?>
 						</li>
 					</ul>
@@ -243,7 +243,7 @@ include("Funzioni.php");
 				<div class="col-md-5">
 					<div class="product-details">
 						<?php
-						StampProdotto($_GET["ID"]);
+							StampProdotto($_GET["ID"]);
 						?>
 
 					</div>
@@ -252,6 +252,7 @@ include("Funzioni.php");
 
 				<!-- Product tab -->
 				<div class="col-md-12">
+					
 					<div id="product-tab">
 						<!-- product tab nav -->
 						<ul class="tab-nav">

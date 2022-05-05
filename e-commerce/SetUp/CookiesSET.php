@@ -48,7 +48,7 @@ if (!isset($_SESSION["IDutente"]) || ($_SESSION["IDutente"]=="" || $_SESSION["ID
     }
 } else {
     //se la sessione esiste prendo l'id del carrello dal db
-    $sql = $conn->prepare("SELECT ID FROM carrello where IdUtente = ?");
+    $sql = $conn->prepare("SELECT max(ID) as ID FROM carrello where IdUtente = ?");
     $sql->bind_param("i", $_SESSION["IDutente"]);
     $sql->execute();
     $result = $sql->get_result();
