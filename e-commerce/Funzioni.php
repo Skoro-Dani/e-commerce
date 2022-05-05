@@ -19,7 +19,7 @@ function StampArticoli($filtro)
                 echo '<div class="product-img">';
                 echo "<img src='./img/$row->source' alt=''>";
                 echo '<div class="product-label">
-													  <span class="new">'.$filtro.'</span>
+													  <span class="new">' . $filtro . '</span>
 												  	  </div>';
                 echo '</div>';
                 echo '<div class="product-body">';
@@ -140,7 +140,7 @@ function StampArticoliStore($OrderBy, $SearchBar, $page, $Categoria)
                 }
                 echo '<div class="product-rating">';
                 for ($i = 0; $i < 5; $i++) {
-                    if ($i < $StelleArticoli["$row->ID"]) echo '<i class="fa fa-star"></i>';
+                    if ($i < $StelleArticoli["$row->IDarticolo"]) echo '<i class="fa fa-star"></i>';
                     else echo '<i class="fa fa-star-o"></i>';
                 }
                 echo '</div>';
@@ -225,7 +225,7 @@ function VisualizzaCarrello()
                 }
                 echo '<div class="product-rating">';
                 for ($i = 0; $i < 5; $i++) {
-                    if ($i < $StelleArticoli["$row->ID"]) echo '<i class="fa fa-star"></i>';
+                    if ($i < $StelleArticoli["$row->IDarticolo"]) echo '<i class="fa fa-star"></i>';
                     else echo '<i class="fa fa-star-o"></i>';
                 }
                 echo '</div>';
@@ -445,19 +445,19 @@ function StampProdotto($IDArticolo)
     GetStelleArticoli();
     global $StelleArticoli;
     $sql = $conn->prepare("SELECT * FROM articoli WHERE ID = ?");
-    $sql->bind_param('i', $_GET["ID"]);
+    $sql->bind_param('i', $IDArticolo);
     $sql->execute();
     $result = $sql->get_result();
     if ($result !== false && $result->num_rows > 0) {
         if ($row = $result->fetch_object()) {
             echo "<form action='AddProduct.php' method='GET'>";
-            echo "<input type='hidden' name='IDarticolo' value='$row->ID'>";
-            echo "<input type='hidden' name='Pagina' value='product.php?ID=$row->ID'>";
-            echo "<h2 class='product-name'>$row->Nome</h2>";
+            echo "<input type='hidden' name='IDarticolo' value='$IDArticolo'>";
+            echo "<input type='hidden' name='Pagina' value='product.php?ID=$IDArticolo'>";
+            echo "<h2 class='product-name'>Nome</h2>";
             echo '<div>
 										<div class="product-rating">';
             for ($i = 0; $i < 5; $i++)
-                if ($i < $StelleArticoli[$row->ID])    echo '<i class="fa fa-star"></i>';
+                if ($i < $StelleArticoli[$IDArticolo])    echo '<i class="fa fa-star"></i>';
                 else echo '<i class="fa fa-star-o"></i>';
             echo '	</div>';
             echo '<a class="review-link" href="AddCommento.php">10 Review(s) | Add your review</a>';
@@ -478,7 +478,7 @@ function StampProdotto($IDArticolo)
                 echo '<div class="add-to-cart"><div class="qty-label">Qty<div class="input-number">';
                 echo '<select class="input-select" name="quantita">';
                 $i = 1;
-                while ($i < $row->QuantitaDisp +1 && $i < 21) {
+                while ($i < $row->QuantitaDisp + 1 && $i < 21) {
                     echo "<option>$i</option>";
                     $i++;
                 }
@@ -535,7 +535,7 @@ function HeaderAdmin()
         echo '<div id="top-header">';
         echo '<div class="container">';
         echo '<ul class="header-links pull-right">';
-        echo "<li><a ><i class='fa fa-user-o'></i>Aggiungi Prodotto</a></li>";
+        echo "<li><a href='AggiungiProdotto.php'><i class='fa fa-user-o'></i>Aggiungi Prodotto</a></li>";
         echo '</ul></div> </div>';
     }
 }
@@ -544,3 +544,4 @@ function isAdmin()
     if (isset($_SESSION["IsAdmin"]) && $_SESSION["IsAdmin"] == 1) return 1;
     else return 0;
 }
+

@@ -15,21 +15,23 @@ if ($result !== false && $result->num_rows > 0) {
     if ($row = $result->fetch_object()) {
         $Esiste = true;
         $ID = $row->IdArticolo;
-        //echo $ID;
         $quantita = $row->quantita;
     }
 }
+
 if ($Esiste == true) {
     $sql = "DELETE FROM contiene WHERE IdArticolo = $ID and IdCarrello = " . $_SESSION["IDcarrello"];
+
     //echo $sql;
     if ($conn->query($sql) === TRUE) {
         if ($Esiste == true) {
             $sql = "UPDATE articoli SET QuantitaDisp = QuantitaDisp + $quantita WHERE  ID = $ID";
+            $conn->query($sql);
         } else {
             $msg = "Errore";
         }
     }
-} else $msg = "Erroe prodotto non trovato";
+} else $msg = "Errore prodotto non trovato";
 
 
 

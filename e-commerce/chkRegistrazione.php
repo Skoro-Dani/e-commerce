@@ -2,6 +2,7 @@
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 include("Funzioni.php");
+
 $sql_get = $conn->prepare("SELECT username FROM utente where username like ?");
 $sql_get->bind_param("s", $_POST["username"]);
 $sql_get->execute();

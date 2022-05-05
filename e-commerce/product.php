@@ -578,18 +578,20 @@ include("Funzioni.php");
 	<script src="js/main.js"></script>
 	<script>
 		function ModificaQuantitia() {
-			let ID = <?php echo $_GET["ID"]; ?>;
-			let InseririsciQuantitia = prompt("Quanto voui aggiungere");
-			let quantita=0;
-			if (InseririsciQuantitia != null || InseririsciQuantitia != "") {
-				quantita=InseririsciQuantitia;
-				$.get("http://localhost/PHP_skoro/e-commerce/ADDquantita.php", {
-						ID: ID,
-						quantita : quantita
-					},
-					function (data, status) {
-						location.reload();
-					})
+			if (<?php echo isAdmin(); ?> == true) {
+				let ID = <?php echo $_GET["ID"]; ?>;
+				let InseririsciQuantitia = prompt("Quanto voui aggiungere", "0");
+				let quantita = 0;
+				if (InseririsciQuantitia != null || InseririsciQuantitia != "") {
+					quantita = InseririsciQuantitia;
+					$.get("http://localhost/PHP_skoro/e-commerce/ADDquantita.php", {
+							ID: ID,
+							quantita: quantita
+						},
+						function(data, status) {
+							location.reload();
+						})
+				}
 			}
 		}
 
@@ -599,8 +601,8 @@ include("Funzioni.php");
 				$.get("http://localhost/PHP_skoro/e-commerce/Elimina.php", {
 						ID: ID
 					},
-					function (data, status) {
-                        alert("Articolo Eliminato");
+					function(data, status) {
+						alert("Articolo Eliminato");
 					})
 			}
 		}
