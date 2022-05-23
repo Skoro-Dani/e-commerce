@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+//visualliza i dati sulll'account
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 include("Funzioni.php");
@@ -45,9 +48,9 @@ include("Funzioni.php");
 <body>
     <!-- HEADER -->
     <header>
-    <?php 
-		HeaderAdmin();
-		?>
+        <?php
+        HeaderAdmin();
+        ?>
         <!-- MAIN HEADER -->
         <div id="header">
             <!-- container -->
@@ -102,19 +105,7 @@ include("Funzioni.php");
                                     <i class="fa fa-shopping-cart"></i>
                                     <span>My Cart</span>
                                     <?php
-                                    $sql = $conn->prepare("SELECT COUNT(*) as c FROM contiene WHERE IdCarrello = " . $_SESSION['IDcarrello']);
-                                    $sql->execute();
-                                    $result = $sql->get_result();
-                                    if ($result !== false && $result->num_rows > 0) {
-                                        if ($row = $result->fetch_object()) {
-                                            if ($row->c > 0) {
-                                                echo "<div class='qty'>";
-                                                //echo $_SESSION["IDcarelloo"];
-                                                echo $row->c;
-                                                echo "</div>";
-                                            }
-                                        }
-                                    }
+                                    VisualizzaCarrelloNum();
                                     ?>
                                 </a>
                                 <div class="cart-dropdown">
@@ -217,7 +208,7 @@ include("Funzioni.php");
             <!-- row -->
             <div class="row">
                 <?php
-                $sql = $conn->prepare("SELECT * FROM utente join indirizzo on utente.ID = indirizzo.IdUtente WHERE utente.ID = ? ");
+                $sql = $conn->prepare("SELECT imgsrc,username,nome,cognome,stato,regione,provincia,citta,civico,cap, indirizzo.ID as ID,via FROM utente left join indirizzo on utente.ID = indirizzo.IdUtente WHERE utente.ID = ? ");
                 $sql->bind_param('i', $_SESSION["IDutente"]);
                 $sql->execute();
                 $result = $sql->get_result();
@@ -239,10 +230,12 @@ include("Funzioni.php");
                                 echo "<span class='new'>Cognome: $row->cognome</span>";
                                 echo '</div>';
                             }
+                            if($row->stato != null){
                             echo '<div class="product-label">';
                             echo "<span class='new'>Indirizzo: $row->stato - $row->regione - $row->provincia - $row->citta - $row->via - $row->civico - $row->cap </span>";
                             echo "<button type='submit' class='btn btn-link'><a href='DelIndirizzo.php?ID=$row->ID' class='primary-btn order-submit'>-</a></button>";
                             echo '</div>';
+                            }
                         }
                     }
                 }

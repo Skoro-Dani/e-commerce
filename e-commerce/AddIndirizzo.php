@@ -1,4 +1,8 @@
 <?php
+//////////////////////////////
+//pagina html per l'aggiunta dell'indirizzo
+//////////////////////////////
+
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 include("Funzioni.php");
@@ -45,9 +49,9 @@ include("Funzioni.php");
 <body onload="CheckCampi()">
     <!-- HEADER -->
     <header>
-    <?php 
-		HeaderAdmin();
-		?>
+        <?php
+        HeaderAdmin();
+        ?>
         <!-- MAIN HEADER -->
         <div id="header">
             <!-- container -->
@@ -199,14 +203,14 @@ include("Funzioni.php");
 
                     <div class="billing-details">
                         <Form enctype="multipart/form-data" action="chkAddIndirizzo.php" method="post">
-                        <?php
-						if (isset($_GET["msg"]) && $_GET["msg"] != "") echo "<div class='alert alert-danger' role='alert'>" . $_GET['msg'] . "  </div>";
-						?>
+                            <?php
+                            if (isset($_GET["msg"]) && $_GET["msg"] != "") echo "<div class='alert alert-danger' role='alert'>" . $_GET['msg'] . "  </div>";
+                            ?>
                             <div class="section-title">
                                 <h3 class="title">Insert Indirizzo</h3>
                             </div>
                             <div class="form-group">
-                                <input id="Stato" class="input" type="text" name="Stato" placeholder="Stato"onchange="CheckCampi()">
+                                <input id="Stato" class="input" type="text" name="Stato" placeholder="Stato" onchange="CheckCampi()">
                             </div>
                             <div class="form-group">
                                 <input id="Regione" class="input" type="text" name="Regione" placeholder="Regione" onchange="CheckCampi()">
@@ -218,13 +222,13 @@ include("Funzioni.php");
                                 <input id="Citta" class="input" type="text" name="Citta" placeholder="Citta" onchange="CheckCampi()">
                             </div>
                             <div class="form-group">
-                                <input id="via" class="input" type="text" name="via" placeholder="via"onchange="CheckCampi()">
+                                <input id="via" class="input" type="text" name="via" placeholder="via" onchange="CheckCampi()">
                             </div>
                             <div class="form-group">
-                                <input id="Civico" class="input" type="text" name="Civico" placeholder="Civico"onchange="CheckCampi()">
+                                <input id="Civico" class="input" type="text" name="Civico" placeholder="Civico" onchange="CheckCampi()">
                             </div>
                             <div class="form-group">
-                                <input id="Cap" class="input" type="text" name="Cap" placeholder="Cap"onchange="CheckCampi()">
+                                <input id="Cap" class="input" type="text" name="Cap" placeholder="Cap" onchange="CheckCampi()">
                             </div>
                             <button id="button" type="submit" class="btn btn-link"><a class="primary-btn order-submit">Invia</a></button>
                         </Form>

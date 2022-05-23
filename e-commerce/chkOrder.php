@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+//Controlla che l'rodine effetuatto sia valido
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 include("Funzioni.php");

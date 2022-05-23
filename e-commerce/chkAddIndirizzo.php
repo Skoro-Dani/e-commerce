@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+// CHECK add indirizzo
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 include("Funzioni.php");

@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+//Aggiunge o toglie la quantità
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 include("Funzioni.php");

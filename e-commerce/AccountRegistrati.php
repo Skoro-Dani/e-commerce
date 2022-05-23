@@ -1,4 +1,7 @@
 <?php
+/////////////////////////
+//Registrazione
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 include("Funzioni.php");

@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+//Svolge il Logout
+//////////////////////////////
 include("SetUp/connection.php");
 
 session_start();

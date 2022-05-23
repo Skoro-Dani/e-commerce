@@ -1,7 +1,10 @@
 <?php
+//////////////////////////////
+//Sposta tutti gli elementi dal carello provvisorio a quello effettivo dell'account
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
-
+echo "fermati";
 $IDcarrelloNS = $_GET["IDcarrelloNS"];
 $IDcarrelloYS = $_GET["IDcarrelloYS"];
 

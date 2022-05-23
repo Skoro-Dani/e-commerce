@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+//Reindirizzammento alla pagina corrretta
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 

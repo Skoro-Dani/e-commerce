@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+//Pagina che contiene tutte le parti php ripetute più volte
+//////////////////////////////
 $numElementi = 0;
 $StelleArticoli;
 //index.php
@@ -248,17 +251,23 @@ function VisualizzaCarrello()
 function VisualizzaCarrelloNum()
 {
     include("SetUp/connection.php");
-    $sql = $conn->prepare("SELECT COUNT(*) as c FROM contiene WHERE IdCarrello = " . $_SESSION['IDcarrello']);
-    $sql->execute();
-    $result = $sql->get_result();
-    if ($result !== false && $result->num_rows > 0) {
-        if ($row = $result->fetch_object()) {
-            if ($row->c > 0) {
-                echo "<div class='qty'>";
-                echo $row->c;
-                echo "</div>";
+    if ($_SESSION["IDcarrello"]) {
+        $sql = $conn->prepare("SELECT COUNT(*) as c FROM contiene WHERE IdCarrello = " . $_SESSION["IDcarrello"]);
+        $sql->execute();
+        $result = $sql->get_result();
+        if ($result !== false && $result->num_rows > 0) {
+            if ($row = $result->fetch_object()) {
+                if ($row->c > 0) {
+                    echo "<div class='qty'>";
+                    echo $row->c;
+                    echo "</div>";
+                }
             }
         }
+    } else {
+        echo "<div class='qty'>";
+        echo 1;
+        echo "</div>";
     }
 }
 //carrello tendina
@@ -336,7 +345,7 @@ function stampIMG()
         }
     }
 }
-//product.php //prodotti correllati
+//product.php
 function StampProduct()
 {
     include("SetUp/connection.php");
@@ -459,7 +468,7 @@ function StampProdotto($IDArticolo)
                 if ($i < $StelleArticoli[$IDArticolo])    echo '<i class="fa fa-star"></i>';
                 else echo '<i class="fa fa-star-o"></i>';
             echo '	</div>';
-            echo '<a class="review-link" href="AddCommento.php">10 Review(s) | Add your review</a>';
+            echo '<a class="review-link" href="#review-form">10 Review(s) | Add your review</a>';
             echo '</div>';
             echo '<div>';
             if ($row->sconto != 0) {
@@ -570,7 +579,7 @@ function CalcolaPrezzo()
     $sql->execute();
     $result = $sql->get_result();
     $total = 0;
-    
+
     if ($result !== false && $result->num_rows > 0) {
         for ($j = 0; $j < $result->num_rows; $j++) {
             if ($row = $result->fetch_object()) {

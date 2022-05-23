@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+//Check login
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 
@@ -20,9 +23,8 @@ if ($result->num_rows > 0) {
     $funziona = true;
   }
 }
-
 if ($funziona == true) {
-  $sql = $conn->prepare("SELECT * FROM carrello WHERE IdUtente = ". $_SESSION["IDutente"]);
+  $sql = $conn->prepare("SELECT max(ID) as ID FROM carrello WHERE IdUtente = ". $_SESSION["IDutente"]);
   $sql->execute();
   $result = $sql->get_result();
   $funziona = false;

@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+//Check Registazione
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 include("Funzioni.php");
@@ -24,10 +27,14 @@ if ($result_get->num_rows == 0) {
         $sql->bind_param("ssss", $_POST["username"], $password, $_POST["Nome"], $_POST["Cognome"]);
     }
 
-    if ($sql->execute()) 
-    {
-        $_SESSION["IDutente"]=$sql->insert_id;
+    if ($sql->execute()) {
+        $_SESSION["IDutente"] = $sql->insert_id;
+        //creo il carrello per l'utente
+        $sqli = $conn->prepare("INSERT INTO carrello (IdUtente) VALUES (?)");
+        $sqli->bind_param("i", $_SESSION["IDutente"]);
+        $sqli->execute();
+        $_SESSION["IDcarrello"] = $sqli->insert_id;
+        //
         header("location:AddIndirizzo.php"); //OK
-    }
-    else header("location:AccountRegistrati.php?msg=Errore durante la registrazione");
-}else header("location:AccountRegistrati.php?msg=nome utente gia in uso");
+    } else header("location:AccountRegistrati.php?msg=Errore durante la registrazione");
+} else header("location:AccountRegistrati.php?msg=nome utente gia in uso");

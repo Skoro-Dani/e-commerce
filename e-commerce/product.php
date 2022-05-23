@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+//Visuallizza un prodotto
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 include("Funzioni.php");
@@ -604,6 +607,7 @@ include("Funzioni.php");
 					},
 					function(data, status) {
 						alert("Articolo Eliminato");
+						location.reload();
 					})
 			}
 		}

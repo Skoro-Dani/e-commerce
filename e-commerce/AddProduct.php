@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+//Aggiunge un prodotto al carrello
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 

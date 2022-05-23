@@ -1,4 +1,7 @@
 <?php
+//////////////////////////////
+// Elimina un prodotto dalla carello
+//////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
 
