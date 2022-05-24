@@ -29,7 +29,7 @@ if (isAdmin() == 1) {
     while ($Esiste == true) {
         if (isset($_FILES['imgsrc' . $count]['name']) && $_FILES['imgsrc' . $count]['name'] != "") {
             $nomefile = $_FILES['imgsrc' . $count]['name'];
-            echo $nomefile;
+            //echo $nomefile;
             $uploaddir = 'imgUtenti/';
             $uploadfile = $uploaddir . basename($_FILES['imgsrc' . $count]['name']);
             $idarticolo = $sql_get->insert_id;
@@ -40,4 +40,4 @@ if (isAdmin() == 1) {
         } else $Esiste = false;
     }
 }
-//header("location:index.php");
+header("location:index.php");

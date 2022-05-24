@@ -4,7 +4,7 @@
 //////////////////////////////
 include("SetUp/connection.php");
 include("SetUp/CookiesSET.php");
-echo "fermati";
+
 $IDcarrelloNS = $_GET["IDcarrelloNS"];
 $IDcarrelloYS = $_GET["IDcarrelloYS"];
 
